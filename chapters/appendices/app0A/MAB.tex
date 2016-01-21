@@ -1,0 +1,77 @@
+\section*{Multi-Armed Bandit}
+\subsection*{The strategy of trade-off}
+\subsubsection*{Thompson Sampling}
+
+%!ALGORITHM-----------------------------
+%!--------------------------------------
+\begin{algo}[Optimistic Thompson Sampling for Bernoulli Bandits]
+%\caption{Optimistic Thompson Sampling for Bernoulli Bandits}
+\label{algo:thompson3}
+\begin{algorithmic}
+\STATE {\ }
+\STATE Let $\alpha_{1,k} = 1$ and $\beta_{1,k} = 1$, where $k\in \{1,\dots,K\}$
+\FOR {each round t = 1,2,\dots, T}
+	\STATE Sample $\theta_i\sim B(\alpha_{t,i},\beta_{t,i})$, for $i\in \{1,\dots,K\}$
+    \STATE Pull arm $k_t = \text{argmax}_{k\in \{1,\dots,K\}} max\left(\theta_i,\frac{\alpha_{t,i}}{\alpha_{t,i}+\beta_{t,i}}\right)$
+	\STATE Let $\alpha_{(t+1,k_t)}= \alpha_{(t,k_t)} + \mathds{1}(r_{k_t}(t) = 1)$ and $\beta_{(t+1,k_t)} = \beta_{(t,k_t)}+\mathds{1}(r_{k_t}(t) = 0)$.
+\ENDFOR
+\end{algorithmic}
+\end{algo}
+%!----------------------------------------
+\subsubsection*{Boltzmann Exploration (Softmax)}
+
+%!ALGORITHM-----------------------------
+%!--------------------------------------
+\begin{algo}[Exp3]
+\label{algo:softmax2}
+\begin{algorithmic}
+\STATE {\ }
+\STATE Parameter: real number $\tau>0$ and $\gamma\in (0,1]$
+\STATE Initialization: set $w_k(1) = 1$ for $k = 1,\dots, K$. 
+\FOR {each round t = 1,2,\dots, T}
+	\STATE Let $p_k(t) = (1-\gamma)\frac{w_k(t)}{\sum_{i=1}^K w_i(t)}+\frac{\gamma}{K}$ for $k=1,\dots,K$.
+    	\STATE Pull arm $k_t$ s.t. $P(k_t = k) = p_k(t)$ for $k = 1,\dots, K$
+   	\STATE Receive reward $r_{k_t} \in [0,1]$
+	\STATE Let $\hat{r}_k(t) = r_k(t)/p_k(t)$ if $k=k_t$, $0$ for others.
+	\STATE Let $w_k(t+1) = w_k(t) e^{\gamma \hat{r}_k(t)/K}$. 
+\ENDFOR
+\end{algorithmic}
+\end{algo}
+%!----------------------------------------
+
+\subsection*{Best Armed Identification in stationary MAB}
+%!ALGORITHM-----------------------------
+%!--------------------------------------
+\begin{algo}[UCB-E algorithm]
+\label{algo:ucbe}
+\begin{algorithmic}
+\STATE	$\ \ $
+\STATE	Parameter: exploration parameter $a>0$
+\FOR	{$k \in\{1,\dots,K\}$}
+	\STATE	let $B_{k,s} = \hat{X}_{k,s}+\sqrt{\frac{a}{s}}$ for $s\geqslant 1$ and $B_{i,0} = +\infty$
+\ENDFOR
+\FOR	{each round $t=1,\dots,T$}
+	\STATE	Draw $k_t\in \text{argmax}_{k \in \{1,\dots,K\}}B_{k,T_k(t-1)}$
+\ENDFOR
+\STATE	Let $k_T \in \text{argmax}_{k\in\{1,\dots,K\}}\hat{X}_{k,T_k(T)}$
+\end{algorithmic}
+\end{algo}
+%!-------------------------
+
+%!ALGORITHM-----------------------------
+%!--------------------------------------
+\begin{algo}[Successive Rejects algorithm]
+\label{algo:SR}
+\begin{algorithmic}
+\STATE	$\ \ $
+\STATE Input: $\mathscr{K}_1=\{1,\dots,K\}$, $\overline{\log}(K) = \frac{1}{2}+\sum_{k=2}^K \frac{1}{k}$, $n_0 = 0$ and for $k\in \{1,\dots,K-1\}$
+\STATE	$n_k = \left\lceil{\frac{1}{\overline{\log}(K)}\frac{n-K}{K+1-k}}\right\rceil $
+\FOR	{for each step $k=1,\dots,K-1$}
+	\FOR	{each $k\in \mathscr{K}_k$, select arm $k$ for $n_k - n_{k-1}$ rounds}
+    	\STATE	Let $\mathscr{K}_{k+1} = \mathscr{K}_k\/ \text{arg min}_{k\in \mathscr{K}_k} \hat{X}_{k,n_k}$.
+    \ENDFOR
+\ENDFOR
+\STATE Output: the unique element of $k_T$ of $\mathscr{K}$
+\end{algorithmic}
+\end{algo}
+%!-------------------------

@@ -1,0 +1,146 @@
+\section*{Bandit feedback}
+\subsection*{Multiclass Classification}
+%!ALGORITHM-----------------------------
+%!--------------------------------------
+\begin{algo}[Perceptron]
+%\caption{Perceptron}
+\label{algo:perceptron}
+\begin{algorithmic}
+\STATE {\ }
+\STATE Initialize: Set $w_1$ to the zero $K \times d$ matrix.
+\FOR {each round t = 1,2,\dots, T}
+	\STATE Observe $x_t \in \Rd$.
+    \STATE Predict $\hy = \underset{\{i = 1,\dots,K\}}{argmax}\left\langle w_t^i ,x_t\right\rangle$
+    \STATE Update $w_{t+1} = w_t + \left( \Phi(y_t,x_t) - \Phi(\hy, x_t) \right)$.
+\ENDFOR
+\end{algorithmic}
+\end{algo}
+%!----------------------------------------
+
+%!ALGORITHM-----------------------------
+%!--------------------------------------
+\begin{algo}[the Second-Order Perceptron]
+%\caption{Second-order Perceptron}
+\label{algo:2perceptron}
+\begin{algorithmic}
+\STATE  ${\ }$
+\STATE Parameter: $a>0$
+\STATE Initialize: Set $X_0 = \o$; $W_1$ to the zero $K \times d$ matrix; 
+\FOR {each round t = 1,2,\dots, T}
+	\STATE Observe $x_t \in \mathbb{R}^n$.
+    \STATE Set $S_t = [X_{t-1} x_t]$
+    \STATE Predict $\hy = \text{arg max}_{i\in\{1,\dots,K\}} <w_{i,t}, x_t>$, where $w_t = (aI_n+S_tS_t^T)^{-1}w_{t-1}$ 
+    \STATE Receive feedback $y_t\in\{1,\dots,K\}$
+    \IF	{$\hat{y}_t \neq y_t$}
+    \STATE $w_t = w_{t-1} + \Phi(x_t,y_t)-\Phi(x_t,\hy)$%; X_k = X_t; k\leftarrow k+1$.
+	\ENDIF
+\ENDFOR
+\end{algorithmic}
+\end{algo}
+%!----------------------------------------
+
+%!ALGORITHM-----------------------------
+%!--------------------------------------
+\begin{algo}[PA algorithm in multiclass classification online learning]
+%\caption{PA algorithm in multiclass classification online learning}
+\label{algo:pa}
+\begin{algorithmic}
+\STATE ${\ }$
+\STATE Initialize: Set $W_1$ to the zero $K \times d$ matrix.
+\FOR {each round t = 1,2,\dots, T}
+	\STATE Observe $x_t \in \Rd$.
+    \STATE Predict $\hy = \underset{i = \{1,\dots,K\}}{argmax}\left\langle W_t ,\Phi(x_t,y_t)\right\rangle$
+    \STATE suffer loss: $l_t = [w_t\cdot \Phi(x_t,\hat{y}_t)-w_t\cdot \Phi(x_t,y_t)+1]_+$
+    \STATE set: $\tau_t = \frac{l_t}{\parallel{\Phi(x_t,y_t)-\Phi(x_t,\hat{y}_t)}\parallel^2}$
+    \STATE Update $W_{t+1} = W_t + \tau_t \left(\Phi(x_t,y_t)-\Phi(x_t,\hat{y}_t)\right)$.
+\ENDFOR
+\end{algorithmic}
+\end{algo}
+%!----------------------------------------
+
+\subsection*{Banditron}
+%!ALGORITHM-----------------------------
+%!--------------------------------------
+\begin{algo}[Banditron]
+%\caption{Banditron}
+\label{algo:banditron}
+\begin{algorithmic}
+\STATE $\ \ $ 
+\STATE Parameter: number $\gamma\in \left(0,\frac{1}{2}\right)$.
+\STATE Initialize: Set $W_1$ to the zero $K \times d$ matrix.
+\FOR {each round t = 1,2,\dots, n}
+	\STATE Observe $x_t \in \Rd$.
+    \STATE Set $\hy = \underset{i = 1,\dots,K}{argmax}\left\langle W_t^i ,x_t\right\rangle$
+	\STATE Prediction $Y_t \in \left\lbrace1,\dots,\right\rbrace$ drawn from distribution $p_t = \left(p_{1,t},\dots ,p_{K,t}\right)$ such that $p_{i,t} = (1-\gamma)\1_{\hat{y}_t=i} +\frac{\gamma}{K}$.
+    \STATE Observe $\1_{(\hat{y}_t=y_t)}$.
+    \STATE Update $W_{t+1} = W_t + \left(\frac{\1_{\tilde{y}_t=y_t}}{p_{i,t}}\Phi(\tilde{y}_t,x_t)-\Phi(\hat{y}_t,x_t)\right)$.
+\ENDFOR
+\end{algorithmic}
+\end{algo}
+%!----------------------------------------
+
+%!-----------------------------------------------------------
+\begin{algo}[Confidit]
+\label{algo:confidit}
+\begin{algorithmic}
+\STATE	$\ \  $
+\STATE Parameter: $\alpha\in(-1,1]$
+\STATE Initialization:	$A_0 = (1+\alpha)^2I\in\mathbb{R}^{dK\times dK}$, $W_o = (\mathbf{w}_{1,0},\dots,\mathbf{w}_{K,0}) = \mathbf{0} \in \mathbb{R}^{dK}$;
+\FOR	{each round $\examples$ }
+	\STATE	Get instance $\xt\in \mathbb{R}^d$, and normalized it $\parallel{\xt}\parallel = 1$;
+    \STATE Set:
+    		\[\begin{split}
+W_{t-1}' = \underset{W\in\mathbb{R}^{dK}}{ argmin}  d_{t-1} (W,W_{t-1}) \\
+\text{s.t.}\forall i\in [K] -\alpha\leqslant \mathbf{w}_i^T\xt \text{ and } \sum_{i=1}^{K}\mathbf{w}_i^T\xt = 1+\alpha - K\alpha
+\end{split}\]
+	\STATE Set: $\forall i\in[K] \hat{\Delta}_{i,t}' = \xt^T\mathbf{w}_{i,t-1}'$;
+    \STATE Output: \[\begin{split}\hy = \text{arg max}_i (\hat{\Delta}_{i,t}'+\epsilon_{i,t}), \text{where}  \epsilon_{i,t}^2 = \left( 2\xt^TA_{i,t}^{-1} \xt\right)\times \eta_t \\
+ \text{and} \eta_t = \frac{1}{2}(1+\alpha)^2\parallel{U}\parallel_2^2 + \frac{(1+\alpha)^2}{2}\sum_{s=1}^{t-1}\mathbf{x}_s^TA_{\hat{y}_s,s}^{-1}\mathbf{x}_s +9(1+\alpha)^2\log{\frac{t+4}{\delta}}\end{split}\]
+ 	\STATE Get feedback $M_t = \{y_t\neq\hy\}$;
+    \IF	{$M_t = 1$} 
+    	\STATE	with probability $(1-\alpha)/2$ set
+        \STATE	\[X_t = (0,\dots,0,\underset{\text{position } \hy}{\underbrace{\xt}},0,\dots,0)\]
+        \STATE with probability $(1+\alpha)/2$ set
+        \STATE	\[X_t = (0,\dots,0,\underset{\text{position } \hy}{\underbrace{-\xt}},0,\dots,0)\]
+    \ELSE	
+    	\STATE	\[X_t = (0,\dots,0,\underset{\text{position } \hy}{\underbrace{\xt}},0,\dots,0)\]
+    \ENDIF
+   \STATE	Update:
+   \STATE	\[\begin{split}
+A_t = A_{t-1} + X_tX_t^T \\
+W_t = A_t^{-1}(A_{t-1}W_{t-1}' + X_t).
+\end{split}\]
+\ENDFOR
+\end{algorithmic}
+\end{algo}
+%-------------------------------------------------------------
+
+\subsection*{Multi-labels Classification}
+\subsubsection*{Multi-labels Classification in bandit setting}
+%!--------------------------------------
+\begin{algo}[The algorithm based on 2nd order in bandit setting]
+\label{algo:MLBgentile}
+\begin{algorithmic}
+\STATE	$\ \ $
+\STATE	Parameters: loss parameter $a \in[0,1]$, cost value $c(i,s)$, interval $D = [-R,R]$, function $g\rightarrow R$, confidence level $\delta\in[0,1]$
+\STATE	Initialization: $A_{i,0} = I\in \mathbb{R}^{d\times d}$, $i=1,\dots,K$, $w_{i,1} = \in \mathbb{R}^d$, $i=1,\dots,K$;
+\FOR 	{for each instance $\examples$}
+	\STATE	Get instance $\xt\in\mathbb{R}^d$: $\parallel{\xt}\parallel^2 = 1$;
+    \STATE	$\forall i\in[K]$, set $\hat{\Delta}_{i,t}' = \xt^Tw_{i,t}'$, where
+    \[w_{i,t}' = \begin{cases} w_{i,t} & \text{if } w_{i,t}^T\xt\in[-R,R],\\
+    w_{i,t} - \left(\frac{w_{i,t}^T\xt-R \text{sign} (w_{i,t}^T\xt)}{\xt^TA_{i,t-1}^{-1}\xt}\right) A_{i,t-1}^{-1}\xt & \text{otherwise};
+\end{cases}\]
+	\STATE	Output 
+    \[\hY = \text{arg min}_{Y = (j_1,j_2,\dots,j_{|Y|})\subseteq[K]}\left( \sum_{i\in Y}(c(j_i,|Y|)-(\frac{a}{1-a}+c(j_i,|Y|))\hat{p}_{i,t})\right)\], where: $\hat{p}_{i,t} = \frac{g(-[\hat{\Delta}_{i,t}'+\epsilon_{i,t}]_D)}{g(-[\hat{\Delta}_{i,t}'+\epsilon_{i,t}]_D+g([\hat{\Delta}_{i,t}'+\epsilon_{i,t}]_D}$, and $\epsilon_{i,t}^2 = \eta \xt^TA_{i,t}^{-1}\xt$
+    \STATE	Get bandit feedback $Y_t\cap\hY$;
+    \STATE	$\forall i\in[K]$, update $A_{i,t} = A_{i,t-1}+|s_{i,t}|\xt\xt^T$, $w_{i,t+1} = w_{i,t}' - \frac{1}{c_L''}A_{i,t}^{-1}\triangledown_{i,t}$, where 
+    \[s_{i,t} = \begin{cases}
+1 & \text{if } i\in Y_t\cap\hY \\
+-1 & \text{if } i\in\hY\setminus Y_t = \hY\setminus(Y_t\cap\hY)\\
+0 & \text{otherwise};
+\end{cases}\]
+	\STATE	with $\triangledown_{i,t} = -g(s_{i,t}\hat{\Delta}_{i,t'})s_{i,t}\xt$.
+\ENDFOR
+\end{algorithmic}
+\end{algo}
+%---------------------------------------

@@ -1,0 +1,14 @@
+\subsection{Adversary Bandit}
+\label{subsec:advesary}
+
+Adversary environment\cite{auer2003nonstochastic}, a branch of non-stationary environment, is a challenging problem of the Multi-Armed Bandit. In this environment, the rewards for each step are selected by an adversary rather than the stationary environment where rewards being picked from a fixed distribution. Any method to solve the MAB in adversary environment should recognize that the information between the gambler and the adversary is asymmetry. Similarly to the stationary environment, we define $\mathscr{K} = \{1, \dots, K\}$ be a set of arms, and $\mathscr{T} = \{1,2,\dots,T\}$ denote the sequence of decision epochs by gambler. To compare between the stationary environment and the adversary environment, the difference is the reward distribution of arms. In adversarial environment, the reward distribution $\nu$ is changeable at each epoch $t$ under adversary's control instead of the constant distribution in stationary. From another point of view, adversarial bandit can be seen as a competition between the gambler and an omniscient adversary. 
+
+This issue can be transformed into three step at the iteration $t$:
+\begin{itemize}
+\item	the adversary choose the reward distributions $\mathbf{\mu_t = (\mu_{1,t},\dots, \mu_{K,t}) \in [0,1]^K }$
+\item	the gambler picks one arm $k_t$ with no knowledge of the adversary's choice 
+\item	the rewards are assigned $X_{k,t} \sim \mu_{k,t}$
+\end{itemize}
+
+\textbf{Regret} who measures the performance of the gambler compared to the performance of the best arm:
+\[R_T = \underset{k=1,\dots,K}{\text{max}}\sum_{t=1}^T \mu_{k,t} - \sum_{t=1}^T X_{k_t,t}.\]

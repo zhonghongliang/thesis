@@ -1,0 +1,51 @@
+%
+% File: chap01.tex
+% Author: Hongliang Zhong
+% Description: Introduction chapter where the biology goes.
+%
+\let\textcircled=\pgftextcircled
+\chapter{Introduction}
+\label{chap:introduction}
+\begin{quote}
+``Bandit problems embody in essential form a conflict evident in all human action: choosing actions which yield immediate reward vs. choosing actions whose benefit will come only later.''
+\hfill
+-- P.~Whittle (1980)
+\end{quote}
+\begin{figure}[h!]\centering{
+\includegraphics[width=0.33\linewidth]{chapters/chapter01/fig01/bandit.png}
+\hspace{-0.75cm}
+\includegraphics[width=0.33\linewidth]{chapters/chapter01/fig01/bandit.png}
+\hspace{-0.75cm}
+\includegraphics[width=0.33\linewidth]{chapters/chapter01/fig01/bandit.png}
+}
+\end{figure}
+
+\initial{E}arly in 1933, William R. Thompson described a method ``Thompson Sampling'' in article \cite{thompson1933likelihood}, for attempting to compare treatments which both have unknown effectiveness. Here, it is a focus on finding the balance between exploration and exploitation. This is the prototype of bandit problems. 
+
+In 1952, H. Robbins introduced a problem in \cite{robbins1952bandit}, which worked in the area of sequential selection of experiments, and became the foundation of Bandit problem. 
+
+In 1957, Richard Bellman wrote the first book\cite{bellman1957markovian} at this subject, formulated the Multi-Armed Bandit problem as a class of dynamic program. 
+
+
+Related to H. Robbins's research, in 1979, Gittins and Jones published \cite{gittins1979dynamic} to outline an allocation index for sequential experiment problems, and defined the stopping rule by the theorem. From then on, more and more proofs of ``Gittins Index'' have been proposed, i.e. by Whittle \cite{whittle1980multi},  Weber \cite{weber1992gittins}, Tsitikis \cite{tsitsiklis1994short}, $\dots$
+
+Nowadays, Further researches and applications of Bandit problem have been explored,  for example, in Machine Learning by  \cite{Berry85Bandit, kaelbling1996reinforcement,Sutton98}, Economics \cite{anderson2001behavioral,banks1997experimental,steyvers2009bayesian} , Cognitive Science  \cite{daw2006cortical}, etc.
+%The classical Bandit modeling, named ``K-Armed Bandit'', that the gambling machines has $K$ arms, for each arm with an unknown, possibly different distribution of payoffs. You have no idea which arm has the most reward. After some times experiments, you can earn some knowledge of them ( it could be the reward of each arm by observing temporal of each time). Therefore, you should trade off a balance between to gain the most rewards and to gain the new knowledge, that's the core philosophy thought of Bandit problem. For example, always pull the arm who performed best in past, maybe you miss the optimal arm by a local optimal arm. For more details of trade-off between Exploration/Exploitation, we will introduce it in the Chapter~\ref{chap:tradeoff}.
+
+\
+\
+\
+\
+\
+\
+
+
+%=======
+
+\input{modeling}
+
+\input{application}
+
+\input{structure}
+
+%=========================================================

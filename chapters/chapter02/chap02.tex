@@ -1,0 +1,37 @@
+%
+% File: chap02.tex
+% Author: Hongliang Zhong
+%
+\let\textcircled=\pgftextcircled
+\chapter{Multi-Armed Bandit}
+\label{chap:MAB}
+
+\initial{B}andit problems just as we expounded in Chapter~\ref{chap:introduction}, was formally proposed in 1952 by H.Robbins. Generally, this issue could be simplified such a model as below:
+
+A gambling machine with several arms, each of which has an unknown, possibly different distribution of payoffs. The gambler has no idea about which arm with most reward. Considering a sequential decision experiment, the arm $k$ from all arms in an observation being taken from the $i^{th}$ experiment, and the gambler receives a numerical value of this observation as a reward. The observations maybe give him some information useful in the future choices. However,  this observation to obtain information is also to gain rewards. So, the problem for the gambler is how to strike a balance between gaining rewards and obtaining information. 
+
+For example, it is not good to always pull the arm that has performed best in the past, because it may have been that you were just unlucky with the best arm. If you have many trials to go and it only takes a few trials to clarify the matter, you can stand to improve your average gain greatly with only a small investment. Typically in these problems, there is a period of gaining information, following by a period of narrowing down the arms, followed by a period of "profit taking", playing the arm you feel to be the best.
+
+That model is also called ``Multi-Armed Bandit'' (MAB), which is a classical Bandit problem. In this chapter, we focus on describing MAB to understand Bandit problems. The purposes of this chapter is to propose some necessary notions, present some effective strategies,  define and analyze some specific issues. 
+
+
+\
+\
+\
+\
+\
+\
+
+%=======
+
+\input{environment/environment.tex}
+
+\input{gittins.tex}
+
+\input{tradeoff/tradeoff.tex}
+
+\input{lowerbound.tex}
+
+\input{bestarm.tex}
+
+\input{conclusion.tex}

@@ -1,0 +1,39 @@
+\subsection{Boltzmann Exploration (Softmax)}
+\label{subsec:softmax}
+This section, is about  Boltzmann Exploration (also named  Softmax), which is based on the axiom of choice \cite{luce1959individual} and pick each arm with a probability that is proportional to its average  behavior. Arms with greater empirical means could be therefore picked with higher probability. Softmax  selects arms by using a Boltzmann distribution. Given initial empirical means $\hat{\mu}_1(0),\dots,\hat{\mu}_K(0)$,
+\begin{equation}
+\label{equa:boltzmann}
+p_k(t+1) = \frac{\exp{\hat{\mu}_k(t)/\tau}}{\sum_{i=1}^{K}\exp{\hat{\mu}_i(t)/\tau}}, \text{where } k\in \{1,\dots,K\}
+\end{equation}
+
+Softmax may depend on the task and on human factors by the only parameter $\tau$. Where $\tau$ is a temperature parameter, controlling the randomness of the choice. When $\tau = 0$, Boltzmann Exploration acts like pure greedy. On contrast, $\tau$ tends to infinity, the algorithms picks arms uniformly at random. Most people find it easier to set the $\tau$ requires knowledge of the likely action values and of powers of $e$.
+
+%!ALGORITHM-----------------------------
+%!--------------------------------------
+\begin{algo}[SoftMax]
+%\caption{SoftMax}
+\label{algo:softmax1}
+\begin{algorithmic}
+\STATE {\ }
+\STATE Parameter: real number $\tau > 0$
+\STATE Initialization: Set $\hat{\mu}_k(0) = 0$ for $\forall k \in [1,\dots,K]$
+\FOR {each round t = 1,2,\dots, T}
+	\STATE Sample arms $i$ according to the distribution $P(t)$, where
+    \[P_k(t) = \frac{\exp \left(\hat{\mu}_k(t-1)/\tau\right)}{\sum_{i=1}^{K} \exp \left(\hat{\mu}_i(t-1)/\tau\right)}\]
+    \STATE Receive the reward $r_{k_t}$, here $k_t$ is the sampled arm for instant t 
+    \STATE Let $\hat{\mu}_{k}(t) = \sum_t r_{k,t}/ \sum_t \1_{k = k_t,t}$
+\ENDFOR
+\end{algorithmic}
+\end{algo}
+%!----------------------------------------
+
+The Softmax strategy could be modified in the same way as the $\epsilon$-greedy strategy in Section~\ref{subsec:greedy} into decreasing Softmax where the temperature decreases with the number of rounds played. The decreasing Softmax is identical to the Softmax but with a temperature $\tau_t = \tau_0/t$ that depends on the index $t$ of the current round. The choice of the value of $\tau_0$ is left to the user. The decreasing Softmax is analyzed by Cesa-Bianchi \cite{cesa1998finite} with the Softmix algorithm. 
+
+A more complicated variant of the Softmax algorithm, the EXP3 ``(see in Appendix~\ref{algo:softmax2})exponential weight algorithm for Exploration/Exploitation'' is introduced in \cite{auer1995gambling}. The probability of choosing the arm $k$ at the round of index $t$ is defined by 
+\begin{equation}
+P_k(t) = (1-\gamma)\frac{w_k(t)}{\sum_{i=1}^{K}w_i(t)}+\frac{\gamma}{K}
+\end{equation}
+where $w_i(t+1) = w_i(t) exp\left(\gamma\frac{r_i(t)}{P_i(t)K}\right)$,
+if the arm $i$ has been pulled at time t with $r_i(t)$ being the observed reward,
+$w_i(t+1) = w_i(t)$ otherwise. The choice of the value of the parameter $\gamma\in (0,1]$ is left to the user.
+The main idea is to divide the actual gain $r_i(t)$ by the probability $P_i(t)$ that the action was chosen. For a modified version of EXP3, with $\gamma$ decreasing over time, it is shown by \cite{auer2003nonstochastic}, that a regret of $O(\sqrt{KT\log{K}})$ is achieved.

@@ -1,0 +1,27 @@
+\subsection{Some algorithms of Multi-Objective Multi-Armed Bandit}
+\label{subsec:MOMABE}
+In this section, we will introduce some algorithm to solve the MOMAB problem. 
+
+\vspace{3ex}
+\textbf{The scalarized PAC algorithm}
+Refer to the paper\cite{drugan2015linear}. In the following, it's a baseline algorithm to identify the Pareto front in stochastic environments. We assume a tolerance error $\delta$ and we want to find the Pareto front with probability at $1-\delta$. An arm $i$ is optimal for a given scalarization function $f_w$ iff
+\[f_w(\hat{\mu}_i) > \underset{l\in \mathscr{A}}{\text{max}}f_w(\hat{\mu}_l) - \epsilon\]
+The algorithm scalarized PAC algorithm sPAC is given in Algorithm~\ref{algo:spac}. We assume a fixed number of weight vectors $W\leftarrow \{w_1,\dots,w_{|W|}\}$. The probability that the expected reward vector of an arm $i$, $\mu_i$ is not the same as its estimated reward vector $\hat{\mu}_i$, is bounded with the confidence value $\epsilon>0$ and a small error probability $\delta>0$. We want to bound the probability of the event $f_w(\hat{\mu}_i)- f_w(\mu_i) > \epsilon$, for any scalarization function $f_w$.
+
+In Algorithm~\ref{algo:spac}, each arm is pulled for an equal and fixed number of times $\frac{1}{(\epsilon/2)^2}\log{(\frac{2|W|K}{\delta})}$. For each weight vector $w$, we identify the optimal arms using the $N$ arm pulls. The output for this algorithm is a reunion of the optimal set of arms for each scalarization function $f_w$. If an optimal arm is not already in the Pareto front, then that arm is added to the Pareto front $\mathscr{A}^{\ast}$. To maintain the Pareto front $\mathscr{A}^{}\ast$, the dominated arms are deleted from $\mathscr{A}^{\ast}$
+
+
+\vspace{3ex}
+\textbf{UCB1 in MOMAB} 
+In the MAB problems, Upper Confidence Bound(UCB) policy \cite{Auer02Finite} plays firstly each arm, then adds to the estimated mean $\hat{\mu}$ of each arm $i$ an exploration bound. The exploration bound is an upper confidence bound which depends on the number of times arm $i$ has been selected. UCB selects the optimal arm $i^{\ast}$ that maximizes the function $\hat{\mu}_i + \sqrt{\frac{2\ln{(t)}}{N_i}}$ as follows:
+\[i^{\ast} = \underset{1\leqslant i\leqslant |\mathscr{A}|}{\text{max}}\left(\hat{\mu}_i + \sqrt{\frac{2\ln{(t)}}{N_i}}\right)\]
+where $N_i$ is the number of times arm $i$ has been pulled. 
+
+For the MOMAB problems, \cite{drugan2013designing} have extended the UCB policy to find the Pareto optimal arm set either by using UCB in Pareto order relationship or in scalarized functions. Where, Pareto-UCB plays initially each arm $i$ once. At each time step $t$, it estimates the mean vector of each of the multi-objective arms $i$, i.e. $\hat{\mu}_i = [\hat{\mu}_i^1,\dots,\hat{\mu}_i^d]$ and adds to each dimension an upper confidence bound. Pareto-UCB uses a Pareto Partial order relationships. The Pareto optimal arm set $\mathscr{A}^{\ast}$, for all the non-optimal arms $k$, where $k\notin \mathscr{A}^{\ast}$ there exists a Pareto optimal arm $i\in \mathscr{A}^{\ast}$ not dominates by the arms $k$:
+\[\hat{\mu}_k + \sqrt{\frac{2\ln{(t \sqrt[4]{d|\mathscr{A}^{\ast}|})}}{N_k}} \nsucc \hat{\mu}_i + \sqrt{\frac{2\ln{(t\sqrt[4]{d|\mathscr{A}^{\ast}|})}}{N_i}}\]
+
+Pareto-UCB selects uniformly, randomly one of the arms in the set $\mathscr{A}^{\ast}$. The idea is to select most of the times one of the optimal arm in the Pareto front set, $i\in \mathscr{A}^{\ast}$. An arm $j \notin \mathscr{A}^{\ast}$ that is closer to the Pareto front set according to metric measure is more selected than the arm $k\notin \mathscr{A}^{\ast}$ that is far from $\mathscr{A}^{\ast}$.
+
+\vspace{3ex}
+\textbf{Annealing Linear Scalarized Based MOMAB algorithm}
+This algorithm is proposed by \cite{yahyaa2014scalarized}. It  converts the multi-objective into a single objective one by using linear scalarized function. The annealing linear scalarized algorithm trades off efficiently between exploration and exploitation by using a decaying parameter $\epsilon_t$, where $\epsilon_t\in(0,1)$ in combination with the Pareto dominance relation. The $\epsilon_t$ parameter has a high value at the beginning of time step $t$ to explore all the available arms and increase the confidence in the estimated mean vectors, but as the time step $t$ increases, the $\epsilon_t$ parameter decreases to exploit the arms that have maximum estimated mean vectors. To keep trak on all the optimal arms in the Pareto front $\mathscr{A}^{\ast}$, at each time step $t$, the annealing linear scalarized function uses Pareto dominance relation. If $\epsilon_t \rightarrow 0$, then the annealing algorithm selects uniformly at random one of the available arms. The beginning of time step $t$, $\epsilon_t$ has a high value to explore all the available arms. As the time step $t$ is increased, $\epsilon_t$ has a low value to exploit only the optimal arms. To keep track on all the optimal arms in the Pareto front $\mathscr{A}^{\ast}$, the annealing algorithm uses Pareto dominance relation. (See in Appendix~\ref{algo:annealing})

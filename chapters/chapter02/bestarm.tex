@@ -1,0 +1,63 @@
+\section{Pure Exploration and Best Armed Identification in Multi-Armed Bandit}
+\label{sec:bestarm}
+
+Bubeck \cite{bubeck2009pure, bubeck2011pure} and Chen \cite{chen2014combinatorial} proposed the same problem that the gambler may sample arms under a given number of times $T$ which may be not necessary to know in advance, and be asked to output an arm recommended. They advocate to evaluate the performance of gambler by the simple regret (refer the section~\ref{subsec:stationary}). The distinguish from the classical MAB's modeling is to separate the exploration phase and the exploitation phase. This is the pure exploration problem. Its process is shown as the following modeling,
+\begin{itemize}
+\item	Definir the number of rounds $T$ and number of arms $K$ to gambler;
+\item	Parameters the reward distribution $\nu_1,\dots,\nu_K$ of the arms which is unknown to ganbler;
+\item	Repeat that gambler chooses an arm $k_t \in \mathscr{K}$ and receives the reward $r_{(k_t,t)}$ drawn from $\nu_{k_t}$ and independently from the past;
+\item Finally, the gambler outputs the recommendation $k^{\ast}$ arm from the arm set $\mathscr{K}$.
+\end{itemize}
+
+The pure exploration problem is about the design of strategies who makes the best use of the limited budget in order to optimize the performance and identifier their best choice of a decision-making task. Audibert \cite{audibert2010best} proposed two algorithms to address this problem: UCB-E and Successive Rejects. The former is a highly exploring strategy based on Upper Confidence Bounds, the latter is a parameter-free method based on propressively rejecting the arms which seem to be suboptimal. Audibert shows that these two algorithms are essentially optimal since the regret decrease exponentially at a rate which up to a logarithmic factor.
+
+\subsection*{UCB-E algorithm} 
+This algorithm is the highly exploring policy based on Upper Confidence bounds(UCB-E). When the exploration parameter $a$ (shown in Appendix~\ref{algo:ucbe}) is taken of order $\log{T}$, the algorithm essentially corresponds to the UCB1 algorithm introduced in \cite{auer2010ucb}. And its cumulative regret is of order $\log{T}$. \cite{bubeck2009pure} have shown that algorithms having at most logarithmic cumulative regret, have at least a (non-cumulative) regret of order $T^{-\gamma}$ for some $\gamma > 0$. So taking the parameter $a$ of order $\log{T}$ is not befitting to reach exponentially small probability of error. It should take $a$ as linear in $T$ can explore much more than ever. The theorem below cited from \cite{audibert2010best}
+
+\begin{theo}
+\label{theo:ucbe}
+If UCB-E is run with parameter $0 < a \leqslant \frac{25}{36} \frac{T-K}{H_1}$, then it satisfies
+\begin{equation}
+e_T \leqslant 2TK\exp{-\frac{2a}{25}}.
+\end{equation}
+In particular for $a=\frac{25}{36}\frac{T-K}{H_1}$, we have $e_T \leqslant 2TK\exp{-\frac{T-K}{18H_1}}$
+\end{theo}
+
+Where $e_T$ denote the probabiity of error that the recommendation $ k_T$ equals to the optimal arm $k^{\ast}$ and $H_1$ denotes a quantity $H_1 = \sum_{k=1}^{K}\frac{1}{\Delta_k^2}$ (the definition of $\Delta_k$ in Section~\ref{subsec:stationary}). Theorem~\ref{theo:ucbe} shows that the probability of error of UCB-E is at most of order $\exp{-a}$ for $a\geqslant \log{T}$. 
+
+In view of the parameter $a$ if $a \leqslant \frac{25}{36}\frac{T-K}{H_1}$, it can be essentially said: the more it explores, the smaller the regret is. Besides, the smallest upper
+bound on the probability of error is obtained for a of order $T/H_1$, and is therefore exponentially decreasing
+with $T$. The constant $H_1$ depends not only on how close the mean rewards of the two best arms are, but
+also on the number of arms and how close their mean reward is to the optimal mean reward. This constant
+should be seen as the order of the minimal number $n_{k_T}$ for which the recommended arm is the optimal one with
+high probability. 
+
+\subsection*{Successive Rejects algorithm}
+This is another algorithm to identifier the best arm in MAB setting by pure exploration. The details are shown in Appendix~\ref{algo:SR}. Informally it proceeds as follows. First the algorithm divides the time (i.e., the $T$ rounds) in $K-1$ phases. At the end of each phase, the algorithm dismisses the arm with the lowest empirical mean. During the next phase, it pulls equally often each arm which has not been dismissed yet. The recommended
+arm $k_T$ is the last surviving arm. The length of the phases are carefully chosen to obtain an optimal (up to a logarithmic factor) convergence rate. 
+More precisely, one arm is pulled $n_1 = \left\lceil\frac{1}{\log{K}} \frac{T-K}{K}\right\rceil$ times, 
+one $n_2 = \left\lceil \frac{1}{\log{K}} \frac{T-K}{K-1}\right\rceil$ times, $\dots$, $n_{K-1} = \left\lceil \frac{1}{\log{K}}\frac{n-K}{2}\right\rceil$ times. 
+SR does not exceed the budget of $T$ pulls, since, from the definition $\overline{\log}(K) = \frac{1}{2} +\sum_{k=2}^{K} \frac{1}{k}$, we have
+\[n_1+\dots, + n_{K-1} \leqslant K+\frac{T-K}{\overline{\log}(K)}\left(\frac{1}{2}+\sum_{k=1}^{K-1}\frac{1}{K+1-k}\right) = T\]
+For $K=2$, up to rounding effects, SR is just the uniform allocation strategy.
+\begin{theo}
+\label{theo:sr}
+The probability of error of SR satisfies
+\[e_n \leqslant \frac{K(K-1)}{2}\exp{\left(-\frac{T-K}{\overline{\log}(K)H_2}\right)}.\]
+\end{theo}
+Here $H_2$ denotes a quantity $H_2 = \underset{k\in\mathscr{K}}{\text{max}} k\Delta_k^{-2}$. The following theorem provides a deeper understanding of how SR works. It lower bounds the sampling times of the arms and shows that at the end of phase $k$, we have a high-confidence estimation of $\Delta_{(K+1-k)}$ up to numerical constant factor. 
+
+\begin{theo}
+\label{theo:sr2}
+With probability at least $1-\frac{K^3}{2}\exp{\left( - \frac{T-K}{4\overline{\log}(K)}H_2\right)}$, for any arm $k$, we have 
+\begin{equation}
+\label{equa:sr1}
+n_k(T) \geqslant \frac{T-K}{4\overline{\log}(K)H_2\Delta_k^2}
+\end{equation}
+With probability at least $1-K^3\exp{\left(-\frac{T-K}{32\log{(K)}H_2}\right)}$, for any $k\in\{1,\dots,K-1\}$, the dismissed arm $l_k = \mathscr{K}_{k}\setminus \mathscr{K}_{k+1}$ at the end of phase $k$ satisfies
+\begin{equation}
+\label{equa:sr2}
+\frac{1}{4}\Delta_{K+1-k}\leqslant \frac{1}{2}\Delta_{l_k}\leqslant \underset{m\in \mathscr{K}_k}{\text{max}} \hat{X}_{m,n_k} - \hat{X}_{l_k,n_k} \leqslant \frac{3}{2}\Delta_{l_k}\leqslant 3\Delta_{(K+1-k)}
+\end{equation}
+\end{theo}
+The proofs of Theorem~\ref{theo:sr} and \ref{theo:sr2} see in \cite{audibert2010best}.

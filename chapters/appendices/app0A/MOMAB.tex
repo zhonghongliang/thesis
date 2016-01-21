@@ -1,0 +1,93 @@
+\section*{Multi-Objective Multi-Armed Bandit}
+\subsection*{Dominance method}
+%!----------------------------------------
+\begin{algo}[Global SEMO]
+\label{algo:GSEMO}
+\begin{algorithmic}
+\STATE	$\ \ $
+\STATE	Choose $x\in \mathbb{B}^n$ uniformly at random.
+\STATE	Initialize $P:=\{x\}$.
+\REPEAT	
+	\STATE	Choose $x\in P$ uniformly at random
+    \STATE	Create an offspring $y$ by flipping each bit of $x$ with probability $1/n$.
+    \IF	{$\{z\in P | z\succ y\} = \o$}
+    	\STATE	Update $P:= (P\/\{z\in P|y\succeq z\}) \cup \{y\}$ 
+    \ENDIF
+\UNTIL	{all $x\in \mathbb{B}^n$ be chosen.}
+\end{algorithmic}
+\end{algo}
+%-----------------------------------------
+
+%!----------------------------------------
+\begin{algo}[Global DEMO$_{\epsilon}$]
+\label{algo:GDEMO}
+\begin{algorithmic}
+\STATE	$\ \ $
+\STATE	Choose $x\in \mathbb{B}^n$ uniformly at random.
+\STATE	Initialize $P:=\{x\}$.
+\REPEAT	
+	\STATE	Choose $x\in P$ uniformly at random
+    \STATE	Create an offspring $y$ by flipping each bit of $x$ with probability $1/n$.
+    \IF	{$\{z\in P | b(z)\succ b(y) \vee z\succ y\} = \o$}
+    	\STATE	Update $P:= (P\/\{z\in P| b(y)\succeq b{z}\}) \cup \{y\}$ 
+    \ENDIF
+\UNTIL	{all $x\in \mathbb{B}^n$ be chosen.}
+\end{algorithmic}
+\end{algo}
+%-----------------------------------------
+
+\subsection*{Multi-Objective Multi-Armed Bandit}
+
+
+%!-----------------------------------------
+\begin{algo}[The scalarized PAC algorithm sPAC($\epsilon,\delta,W$)]
+\label{algo:spac}
+\begin{algorithmic}
+\STATE	$\ \ $
+\FOR	{all arms $k=\{1,\dots,K\}$}
+\STATE	Pull each arm $k$ for $l=\frac{1}{(\epsilon/2)^2}\log{(\frac{2|W|K}{\delta})}$ times:
+\STATE	Compute the expected mean reward vectors $\hat{\mu}_k$
+\ENDFOR
+\STATE	Initiates $\mathscr{A}^{\ast} \rightarrow \O$;
+\FOR	{all weight vectors $w\in W$}
+\STATE	select an optimal arm $i^{\ast}$ for function $f_w$;
+\STATE	Add arm $i^{\ast}$ to the Pareto front $\mathscr{A^{\ast}}\rightarrow \mathscr{A}^{\ast} \cup \{i^{\ast}\}$
+\STATE	Delete dominated arms from $\mathscr{A}^{\ast}$
+\ENDFOR
+\RETURN	$\mathscr{A}^{\ast}$
+\end{algorithmic}
+\end{algo}
+%---------------------------------------
+
+%!------------------------------
+\begin{algo}[Annealing Scalarized Algorithm]
+\label{algo:annealing}
+\begin{algorithmic}
+\STATE	$\ \ $
+\STATE	Input: number of arms $|\mathscr{A}|$, horizon of times $T$, number of objectives $|d|$, set of linear scalarized function $S=\{f^1,f^2,\dots,f^{|S|}\}$, decay parameter $\epsilon_0\in(0,1)$, the reward distribution.
+\STATE	Initialize: for each scalarized function $s=1$ to $S$, each arm $i$ played initial times to get the estimated vector $\hat{\mu}_i^s$, set annealing set $\mathscr{A}_{\epsilon}^s = \mathscr{A}$
+	\FOR	{time step $t=1,\dots,T$}
+    	\STATE	set the parameter $\epsilon_t = \epsilon_0^t/(|\mathscr{A}||d|)$
+        \STATE	select $f^s$ uniformly at random
+        \STATE	Compute: the weight set $w^s\rightarrow (w^{1,s},\dots,w^{d,s})$
+        \STATE	$f^s(\hat{\mu}^s) = \text{max}_{1\leqslant i \leqslant |\mathscr{A}|} f^s(\hat{\mu}^s)$
+        \FOR	{arm $i=1,\dots,|\mathscr{A}|$}
+        	\IF	{$f^s(\hat{\mu}^s)\in [f^s(\hat{\mu}^s)-\epsilon_t,f^s(\hat{\mu}^s)]$}
+            	\STATE	$\mathscr{A}^{\ast}_{\epsilon}(t)\rightarrow \mathscr{A}^{\ast}_{\epsilon}(t) \cup i$
+            \ENDIF
+        \ENDFOR
+        \STATE	$S_{difference} \leftarrow (\mathscr{A}^{\ast}_{\epsilon}(t-1))-\mathscr{A}^{\ast}_{\epsilon}(t)$
+        \FOR	{arm $j \in S_{difference}$}
+        	\IF	{$\hat{\mu}_k \nsucc \hat{\mu}_j, \forall k\in \mathscr{A}$}
+            	\STATE	$\mathscr{A}^{\ast}_{\epsilon}(t)\leftarrow \mathscr{A}^{\ast}_{\epsilon}(t) \cup j$
+            \ENDIF
+        \ENDFOR
+        \STATE	$(\mathscr{A}^{\ast})^s(t-1)\leftarrow \mathscr{A}^{\ast}_{\epsilon}(t)$
+        \STATE	Pull an optimal arm $(i^{\ast})^s$ from $(A_{\epsilon}^{\ast})^s$
+        \STATE	Observe:	$r_{i^{\ast}}^s$;
+        \STATE	Update:	$\hat{\mu}_{i^{\ast}}^s$
+    \ENDFOR   
+\end{algorithmic}
+\end{algo}
+%-------------------------------
+

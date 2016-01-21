@@ -1,0 +1,126 @@
+\section{More accuracy to identify the Pareto Front}
+\label{sec:identify}
+\textcolor{red}{It should combine the pure exploration way to run.}
+
+In this section, we propose an algorithm framework to find the Pareto front  of Multi-Objective Multi-Armed Bandit. Referring to the finding maxima vector way in \cite{kung1975finding} which is least complexity, the algorithm in this paper is more effective and more accurate to find the dominated relationship in stochastic environment for MOMAB problem. 
+
+Consider an set of arms $\mathscr{A}$ with $K$ arms, where $K\geqslant 2$, 
+each arm has $D$ independent objectives. At each time $t$, the player 
+selects one arm $i$ and receives a vector reward $\mathbf{r}_i$, 
+$\mathbf{r}_i = [r_i^1,r_i^2, \dots, r_i^D] \in \{0,1\}^K$ from a 
+corresponding distribution with unknown mean vector $\mathbf{p}_i$, where $\mathbf{p}_i = [p_i^1,\dots,p_i^D]$. By drawing an arm $i$, the player estimates the empirical mean $\hat{p}_i^d$ for the arm $i$ in each objective $d\in D$. Let $T_i(N)$ be the number of times the arm $i$ has been played during the first $N$ pulls. The empirical mean $\hat{p}_i$ is the current average reward for the arm $i$, be estimated to $\hat{p}_i = \sum_{t=1}^{T_i(N)} \mathbf{r}_i(t)/T_i(N)$, where $\mathbf{r}_i(t)$ is the sampled values $t$ for arm $i$.  
+
+\textbf{Pareto Dominance and $\epsilon$-Dominance}.
+
+In general case, there are several dominance relations that order vectors in multi-objective optimization. Pareto dominance relationship is the natural way for these environments allowing ordering the vectors directly in the multi-objective space. Let the Pareto optimal set of arms $\mathscr{A}^{\ast}$, or the Pareto front, be the set of arms whose vector reward are non-dominated by all the other arms. All arms in the Pareto optimal set $\mathscr{A}^{\ast}$ are assumed to be equally important.
+
+We consider that the reward vectors are ordered using the Pareto Dominance. Given two real empirical mean rewards $\hat{p}_a$ and $\hat{p}_b$ from arm $a$ and arm $b$, $\hat{p}_a$ dominate $\hat{p}_b$ (denoted $\hat{p}_a \succeq \hat{p}_b$) if for $\forall i$-objective, $\hat{p}_a^i \geqslant \hat{p}_b^i$. The dominance $\hat{p}_a \succ \hat{p}_b$ is rigorous, if $\forall i$-objective, $\hat{p}_a^i > \hat{p}_b^i$. If $\hat{p}_a \nsucc \hat{p}_b$ and $\hat{p}_a \nprec \hat{p}_b$, it means arm $a$ and arm $b$ can't dominate each other, they are incomparable (denoted $a \parallel b$). The set of optimal arms contains all the non-dominated arms such that $\mathscr{A}^{\ast} = \{ k\in \mathscr{A} \mid \nexists k'\in \mathscr{A} , \hat{p}_{k'}\succ \hat{p}_k\}$. The Pareto front is the set of all optimal arms, where all arms are incomparable and no other arms can dominate them. 
+
+But MOMAB is a sequential stochastic learning problem. The vector $\hat{p}_i$ is an empirical mean reward to estimate the true mean reward $p_i$. 
+By the stochastic environment, between $\hat{p}_i$ and $p_i$ there is a distance $\epsilon$, the function $\mathscr{f}(N,\epsilon) = \delta$ could explain the relationship between the distance $\epsilon$, $N$ the times of arm is sampled and the Confidence interval \cite{Auer02Finite}. 
+When the confidence interval is fixed, more times we sample this arm, smaller the distance $\epsilon$.
+
+\textbf{Confidence Intervals}
+Hoeffding's Inequality is useful to analyse the number of required samples needed to obtain a confidence interval by solving the inequality in Theorem~\ref{theo:hoeffding}.
+
+\begin{theo} [$N$-dimensional Chernoff-Hoeffding bound](Durand)
+\label{theo:hoeffding}
+Let $X_1, \dots, X_N$ be independent $D$-dimensional random variables sampled with $\mathbb{E}[X_N] = [p_N^1,\dots,p_N^D]$, $\overline{X} = \frac{1}{N}\sum_{i=1}^{N}X_i$, and $\mu = \mathbb{E}[X] = \frac{1}{N}\sum_{i=1}^{N}[p_i^1,\dots,p_i^D]$.
+
+We consider the following generalization of the standard Chernoff-Hoeffding bound for $D$-dimensional. 
+\begin{equation}
+\begin{split}
+\mathbb{P}[\overline{X}\nprec \mu + \mathbf{\epsilon}] \leqslant De^{-2N\epsilon^2} \\ 
+\mathbb{P}[\overline{X}\nsucc \mu - \mathbf{\epsilon}] \leqslant De^{-2N\epsilon^2} \\ 
+\end{split}
+\end{equation}
+\end{theo}
+
+Here, we use the concept of $\epsilon$-dominance (Trautmann, 2010) to find the Pareto front $\mathscr{A}^{\ast}$. Given two arms $a$ and $b$, if for $\forall i$-objective $p_a^i - p_b^i\geqslant 2\epsilon$, and $\exists$ an objective $j$, $p_a^j - p_b^j > 2\epsilon$, it's said that arm $a$ $\epsilon$-dominates $b$ (denoted $p_a\succ_{\epsilon} p_b$). If arm $a$ non $\epsilon$-dominate arm $b$ and arm $b$ non $\epsilon$-dominate arm $a$, it's said that arm $a$ is $\epsilon$-comparable arm $b$ (denoted $p_a \parallel_{\epsilon} p_b$).
+
+In this section, we introduce the algorithm framework for finding the Pareto front in MOMAB problem. This algorithm has referred Kung's method (1975), and adapt it into the stochastic environment.
+
+Let $\hat{p}_k(t)$ denote the mean of the observed rewards $\{\mathbf{r}_k(\tau)\mid \tau = 1,\dots,t-1\}$.With the confidence interval, if we have an acceptable $(\epsilon ,\delta)$ confidence parameters, each arm we should sample $N(\epsilon,\delta)$ times. Here,
+\[N = \frac{\ln{(2D/\delta)}}{2\epsilon^2}\].
+
+After samples, we get a set of $D$-Objectives arms $\mathscr{A}$, it contains $K$-vectors, where $ \mathbf{P} = \{p_1,p_2,\dots,p_K\}$. Given a D-dimensional vector $p$, $p^{\ast}$ is denoted its projection on the dimension $[2,3,\dots,D]$. We assume that a test for the conditions  $p^{\ast} \prec_{\epsilon} T$ is available, where $p^{\ast}$ is a $D-1$-dimensional vector, and $T$ is a set of $D-1$-dimensional vectors, if $p^{\ast} \prec_{\epsilon} T$, it means that there is a $q\in T$ such that $p^{\ast} \prec_{\epsilon} q$. The first part, we introduce the algorithm with 2,3-dimension~\ref{alg:FP1}. This one has the complexity less that $O(K \log{K})$. We analyze its complexity in the next section. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{algo}[Finding Pareto front with 2,3-Objective]
+\label{alg:FP1}
+\begin{algorithmic}
+\STATE	$\ \ $
+\REQUIRE  Set $T_0 = \phi \subset \mathbb{R}^{D-1}$;
+\STATE  Arrange all vectors $p\in \mathscr{A}$, \\ such that 	$p^1_{\sigma(1)}>p^1_{\sigma(2)}>\cdots>p^1_{\sigma(K)}$;
+\FOR 	{each $k=1,\dots,K$}
+\IF		{$p_{k-1}^1-p_k^1 \leqslant \epsilon$}
+\IF		{$p_k^{\ast} \prec_{\epsilon} T_{k-1}$}
+\STATE	$T_k \leftarrow T_{k-1}$
+\ELSE	
+\STATE	$T_k \leftarrow T_{k-1}\cup p_k^{\ast}$
+\ENDIF
+\ELSE
+\IF		{$p_k^{\ast}\succ_{\epsilon}T_{k-1}$}
+\STATE	$T_k \leftarrow T_{k-1}\cup p_k^{\ast}$
+\ELSE
+\STATE	$T_k \leftarrow T_{k-1}$
+\ENDIF
+\ENDIF
+\ENDFOR
+\end{algorithmic}
+\end{algo}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{theo}
+\label{theo:d23}
+The arm $p_k$ is a Pareto optimal arm with $(\epsilon,\delta)$-confidence, if and only if $p_k^{\ast} \in T_K$.
+\end{theo}
+\begin{proof}
+Presume that $T_{k-1} = \{q_1,\dots\}$ is the Pareto front of the set $\mathscr{A}$. By the algorithm ~\ref{alg:FP1}, we know that $p_k<p_{k-1}$. Since it's a MOMAB problem, we should think about the $(\epsilon,\delta)$-confidence, if $p_k$ is an optimal arm, there is no $q\in T_{k-1}$, that $q\succ_{\epsilon} p_k$. When $p_{k-1}^1-p_k^1\leqslant \epsilon$, and $p_k^{\ast}\nprec T_{k-1}$, there is no $q\in T_{k-1}$ that $\forall i\ q^i-p_k^i >\epsilon$, so $p_k$ is an optimal arm and it will be annexed by the $T_k$ optimal set. When $p_{k-1}^1-p_k^1 > \epsilon$, if $\forall q\in T_{k-1}, \exists i= 2 or 3, p_k^i-q^i>\epsilon$. There is no vector could $\epsilon$-dominate it, it's an optimal arm, and be annexed in the set $T_k$.
+\end{proof}
+
+From the number of Objectives $D>3$, the algorithm will first solve two sub-problems and then combine the results of the sub-problems, i.e., a Set of vector $V$ is divided into two subset $R$ and $S$. To find the Pareto front of $V$, is equivalent to find the Pareto front of $R$ and $S$, then compare two sub-optimal set to find the final Pareto front for set $V$. The more details is shown in the Algorithm~\ref{alg:general}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{algo}[Sub-optimal problem]
+\label{alg:suboptimal}
+\begin{algorithmic}
+\STATE	$\ \ $
+\REQUIRE	Receive two sets $R=\mathscr{A}_{i,2j-1}$ and $S=\mathscr{A}_{i,2j}$
+\STATE		\textbf{Arrange} all vectors $p\in R$ and $q\in S$, such that $p_{\sigma(1)}^i>\dots>p_{\sigma(\mid\mathscr{A}_{i,2j-1}\mid)}^i$ and $q_{\sigma(1)}^i>\dots>q_{\sigma(\mid\mathscr{A}_{i,2j}\mid)}^i$
+\STATE \textbf{Divide} the set $S$ into two subsets $S_1 = \{q_{\sigma(1)}\cdots,q_{\sigma(m)}\}$ and $S_2 = \{q_{\sigma(m+1)}\cdots,q_{\sigma(\mid\mathscr{A}_{i,2j}\mid)}\}$ that $m =\underset{\rho}{argmin}{\rho>\left\lfloor \mid\mathscr{A}_{i,2j}\mid /2\right\rfloor\mid \rho\in K}$ where $K=k\mid q_k-q_{k+1}>\epsilon$
+\STATE 	\textbf{Divide} the set $R$ by $q_m$ into two subsets $R_1$ and $R_2$ such that $R_1 = \{p_{\sigma(1)},\dots, p_{\sigma(n)}\}$ and $R_2 = \{p_{\sigma(n+1)},\dots,p_{\sigma(\mathscr{A}_{i,2j-1})}\}$ where $n = \underset{\rho}{argmax}\{q_{\sigma(m)}-p_{\sigma(\rho+1)}>\epsilon\}$
+\STATE	Then, transfer the [$R$, $S$] problem into three new sub-optimal problem [$R_1$,$S_1$],[$R_2$,$S_1$] and [$R_1$,$S_2$]. 
+\end{algorithmic}
+\end{algo}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{algo}[Finding Pareto front with $D$-Objective ($D>3$)]
+\label{alg:general}
+\begin{algorithmic}
+\REQUIRE Set $i\leftarrow 1$, $\mathscr{A}_{i,j}\leftarrow \mathscr{A}$
+\FOR	{$D-i>3$ and $\mid \mathscr{A}_{i,j}\mid >2$}
+\STATE	Set $j\leftarrow 1$
+\FOR	{each $j = 1,\dots,2^{i-1}$ }
+\STATE 	\textbf{Arrange} the vector $p\in \mathscr{A}_{i,j}$ by $i$-th dimension, 
+such that $p_{\sigma(1)}^i>\dots>p_{\sigma(\mid\mathscr{A}_{i,j}\mid)}^i$;
+\STATE 	\textbf{Divide} the set $\mathscr{A}_{i,j}$ into two subsets $\mathscr{A}_{i+1,2j-1}$ and $\mathscr{A}_{i+1,2j}$ by $m$, that $m = \underset{\rho}{argmin}\{\rho>\left \lfloor \mid \mathscr{A}_{i,j}\mid/2 \right \rfloor\ \mid \rho\in K\}$, where $K = \{k\mid p_{k}^i-p_{k+1}^i >\epsilon\}$;
+
+\ENDFOR
+\STATE \textbf{Set} $i\leftarrow i+1$
+\ENDFOR
+\FOR	{$i\neq 1$}
+\STATE	\textbf{Set} $j=1$
+\FOR	{each $j=1,\dots,2^{i-1}$}
+\STATE	Compare the $\epsilon$-dominance with all vectors of $\mathscr{A}_{i,j} $ from $D-i$-th dimension to $D$-th dimension
+\IF 	{$D-i\leqslant 3$ or $\mid \mathscr{A}_{i,j}\mid\leqslant 2$}
+\STATE	\textbf{Recall} the algorithm~\ref{alg:FP1} to get the Pareto front $\mathscr{A}_{i,j}^{\ast}$
+\ELSE
+\STATE	\textbf{Recall} the algorithm~\ref{alg:suboptimal} to get the Pareto front $\mathscr{A}_{i,j}^{\ast}$ by two sub-Pareto set $\mathscr{A}_{i+1,2j-1}^{\ast}$ and $\mathscr{A}_{i+1,2j}^{\ast}$ 
+\ENDIF
+\STATE	\textbf{Set} $i\leftarrow i-1$
+\ENDFOR
+\ENDFOR
+\end{algorithmic}
+\end{algo}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,10 @@
+\section{Bandit feedback in multi-labels}
+\label{sec:BF02}
+
+After introduce the bandit feedback in multiclass, here we address another kind of bandit feedback: the Bandit Feedback in Multi-labels Classification.  This problem exit widely in the recommendation system, i.e. a limited number of banners placed at different positions on a web-page. The system's goal is to select several advertisements that the user maybe feel interest in. Just like the problem of multiclass with bandit feedback, this one can neither observe the user's other favorites. So it is collectively referred  to as learning with bandit feedback. As opposed possible response, in the partial feedback setting, the system only observes the response to very limited options and, specifically, the option that was actually recommended. 
+
+We consider instantiations of this problem in the multilabel setting. Learning proceeds in rounds, in each time step $t$ the algorithm receives an instance $\xt$ and outputs an ordered subset $\hY$ of labels from a finite set of possible labels $\outputS=\{1,2,\dots,K\}$. Restrictions might apply to the size of $\hY$. This set  corresponds to the aforementioned recommendations, and is intended to approximate the true set of preferences associated with $\xt$. However, the latter set is never observed. In its stead, the algorithm receives $Y_t\cap\hY$, where $Y_t\subseteq\outputS$ is a noisy version of the true set of user preferences on $\xt$. When we are restricted to $|\hY| = 1$ for all $t$, the problem becomes a familiar problem: the multiclass classification with bandit feedback.  
+
+\input{multilabel/subML.tex}
+
+\input{multilabel/subMLBF.tex}

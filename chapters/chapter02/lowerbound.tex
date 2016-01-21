@@ -1,0 +1,25 @@
+\section{Regret Lower bound for the stochastic Multi-Armed Bandit problems}
+\label{sec:lowerbound}
+
+Lai and Robbins \cite{lai1985asymptotically} provided asymptotic lower bounds of the expected regret for the stochastic Multi-Armed Bandit problem. In their work, it shows that $R(T) = o(T^a)$ can applies to any strategy for MAB, for all $a>0$ as $T\rightarrow \infty$. 
+
+Kaufmann et al.\cite{Kaufmann12} call this condition strongly consistent, since that $\text{lim}_{T\rightarrow \infty} \E[S(T)] /T =\mu_{\text{max}}$. When the reward distribution are Bernoulli, for arms $i,j$, their reward average $\mu_i,\mu_j \in [0,1]$ To define the Kullback-Leibler divergence between two Bernoulli distributions with parameters $\mu_i$ and $\mu_j$
+\[D_{KL}(\mu_i,\mu_j) = \mu_i\ln{\frac{\mu_i}{\mu_j}}+(1-\mu_i)\ln{\frac{1-\mu_i}{1-\mu_j}}
+\] 
+
+The Theorem of asymptotic lower bounds states that 
+\begin{theo}{Distribution-dependent lower bound}
+\label{theo:lowerbound}
+Consider a strategy that satisfies $R(T) = o(T^a)$ for any set of Bernoulli reward distributions, any arm $k$ with $\Delta_k = \mu^{\ast}-\mu_k >0$, and any $a>0$. Then, for any set of Bernoulli reward distributions the following holds
+\begin{equation}
+\label{equal:lowerbound}
+\underset{T\rightarrow\infty}{\text{lim}} \text{inf}\frac{R(T)}{\ln{T}} \geqslant \sum_{k\in \mathscr{K}: \Delta_k>0} \frac{\Delta_k}{D_{KL}(\mu_k,\mu^{\ast})}
+\end{equation}
+\end{theo}
+Let $N_{k,T}$ be the number of times the strategy pulled arm $k$ up to time $T$, the bound can be written as, 
+\[\underset{T\rightarrow \infty}{\text{lim}}\text{inf} \frac{\sum_{k\in K}\E[N_{k,T}(\mu_{max}-\mu_k)]}{\ln{T}}
+\]
+
+They call any strategy that meets this lower bound with equality asymptotically efficient. It's also useful to note that for a strategy that satisfies
+\[\underset{T\rightarrow \infty}{\text{lim}}\frac{\E[N_{k,T}]}{\ln{T}} \geqslant \frac{1}{D_{KL}(K,\mu_{max})},\]
+with equality for all $k\in K$ then refer to the Equation~\ref{equal:lowerbound} satisfy with equality and the strategy is asymptotically optimal.

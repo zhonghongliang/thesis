@@ -1,0 +1,8 @@
+\subsection{Linear Bandit}
+\label{subsec:linear}
+Linear Bandit problem\cite{abbasi2011improved, carpentier2012bandit} is also a sequential decision-making problem as same as other bandit problem, where in each step, the gambler has to choose an arm from the arms set. As a response, the gambler receives a stochastic reward, expected value of which is an unknown linear function of the chosen arm.
+
+Here, we present formally the process of Linear Bandit problem. On round $t$, gambler is given the arms set $\mathscr{K} \subseteq \mathbb{R}^d$. From which he should select an arm $k_t\in\mathbb{R}^d$. Then, the gambler observes a reward $r_t = <k_t,\theta> + \eta_t$ where $\theta\in \mathbb{R}^d$ is an unknown parameter and $\eta_t$ is a random noise satisfying the condition $\mathbb{E}[\eta_t| k_{1:t}, \eta_{1:t-1}] = 0 $. 
+
+As other bandit problems, the goal of this problem is to maximize the cumulative reward $R = \sum_{t=1}^T <k_t,\theta>$ over all round $T$. Obviously, the gambler would choose the optimal arm $k^{\ast} = \underset{k\in\mathscr{K}}{\text{argmax }}<k,\theta>$ with the knowledge of $\theta$. As a result, the regret of linear bandit problem, can be formally denoted as 
+\[R = \left(\sum_{t=1}^T <k_t^{\ast},\theta>\right) - \left(\sum_{t=1}^T <k_t,\theta>\right) = \sum_{t=1}^T <k_t^{\ast}-k_t, \theta>\].

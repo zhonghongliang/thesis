@@ -1,0 +1,32 @@
+%
+% File: chap03.tex
+% Author: Hongliang Zhong
+% Description: Introduction chapter where the biology goes.
+%
+\let\textcircled=\pgftextcircled
+\chapter{Bandit with side information}
+\label{chap:BF}
+
+ \initial{C}ontextual Bandit, where the Bandit problem with side information has been introduced in Section~\ref{subsec:contextual}. Since it is closely related to work on supervised learning and reinforcement learning, it is usually applied to solve the problem of supervised learning with partial feedback. The classification with partial feedback is a novel and influential problem. It can be traced back to online classification with full feedback and multi-armed bandit learning. This Classification can be considered as a Multi-Armed Bandit problem with side information. Langford \cite{langford2008epoch} extended the Multi-Armed setting to the case where some side information is provided. But, the setting has a high level of abstraction and its application to the classification bandit learning is not straightforward. 
+ 
+In this chapter, we restate the setting in Supervised learning with partial feedback under the frame of Contextual Bandit (in this chapter, it will be called Bandit Feedback), and recall some outstanding researches and contributions. 
+At first, we formally re-introduce some notations in the modeling of Bandit Feedback. Just as what we have previously presented, the problem of Bandit Feedback is composed by two parts: supervised classification learning and partial feedback. 
+For the side of the classification learning, we will focuse on introducing some supervised classification algorithms in the-state-of-art. From other side, we present some important algorithms working with Bandit Feedback, most of them are based on the supervised learning algorithm combining some bandit strategies. 
+After completing the description of the classification with Bandit Feedback, we repose a novel problem, the Multi-Labels classification working with partial feedback. Then, we provide some analysis and some effective algorithm to this issue. 
+Finally, to evaluate the quality of those algorithms, we take some experimentation on comparing them with classical datasets and analyze their respective features and benefits.
+
+
+\
+\
+\
+\
+\
+\
+
+%=========================================================
+
+\input{multiclass/multiclass.tex}
+
+\input{multilabel/multilabels.tex}
+
+\section{Conclusion}

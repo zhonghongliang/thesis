@@ -1,0 +1,25 @@
+\subsection{Stationary Bandit}
+\label{subsec:stationary}
+
+Stationary Bandit\cite{robbins1952bandit} is the most classical and common bandit problem. The gambler should pick up an arm from the arm setting, where all arms give him a reward for the response. The reward obeys a fixed probability distribution and independent to others arms. 
+The $K$-Armed Bandit in stationary environment, can be defined as following setting. The gambler faces to the slot machine with $K$ arms. Where each arm $k$ from the arm set $\mathscr{K} = \{1,\dots, K\}$ is characterized by a distribution $\nu_k$ with its mean reward $\mu_k$ and a variance $\sigma^2_k$, all of these parameters are no changeable. At each round $t \geqslant 1$, the gambler selects an arm $k_t$ and receives a sample drawn from $\nu_{k_t}$ independently of the past. Here, the goal of the gambler is to maximize rewards (minimize regret) or to identify the best arm from all arms by estimating mean rewards after T pulls.
+
+Under T times pull and observation, gambler samples from each arm will be denoted as $T_k = \sum_{t=1}^{T} \1(k = k_t)$. Finally, gambler could estimate the mean of each arm by $\hat{\mu}_{k} = \frac{1}{T_k}\sum_{t=1}^{T_k}X_{k_t,t}$, where $X_{k_t,t}$ denotes the sample received when we pull arm $k$ for the $t^{th}$ time. After $T$ times observation, we find the optimal arm $k^{\ast}$:
+\begin{equation}
+\label{equa:optarm}
+k^{\ast} = \underset{k \in \mathscr{K}}{\text{argmax }} \hat{\mu}_k \text{  and \ \  }
+\mu^{\ast} = \underset{k \in \mathscr{K}}{\text{max }} \hat{\mu}_k
+\end{equation}
+
+\textbf{Simple Regret}
+In the sequel, $\Delta_k = \mu^{\ast}- \hat{\mu}_k$ is the gap between the maximal expected reward and the $k^{th}$ arm of all arms $\mathscr{K}$. And the minimal gap can be noted by $\Delta = \underset{k: \Delta_k>0}{\text{min}} \Delta_k$.
+So, the simple regret at round T equals the regret on a one-shot instance for the chosen arm $k_T$, that is,
+\begin{equation}
+r_T = \mu^{\ast} - \hat{\mu}_{k_T} = \Delta_{k_T}.
+\end{equation}
+
+\textbf{Regret}
+In the stochastic framework, we define the cumulative regret as:
+\begin{equation}
+R_T = \sum_{t=1}^{T} (\mu^{\ast}-\hat{\mu}_{k_t})
+\end{equation}

@@ -1,0 +1,43 @@
+\subsection{Front Pareto setting}
+\label{subsec:MOMAB11}
+
+There are many ways to formulate an MOO problem. The key question in MOO regards the trade-off between the conflicting objectives $f_i$, $i=1,2,\dots,d$. This subsection concentrates on the concept of Pareto optimization at the core of Multi-Objective Optimization, originated from the engineer and economist Vilfredo Pareto\cite{pareto1896cours}, stating that:
+\begin{quote}
+Multiple criteria solutions could be partially ordered without making any preference choices a prior.
+\end{quote}
+
+Several notions related to Pareto optimality are frequently used in the MOO literature as the following, referring the reader to \cite{deb2001multi} for more detail.
+
+\begin{dfn}
+\textbf{Weak Pareto dominance} Given two objective vectors $\mathbf{y} = (y_1,\dots,y_d), \mathbf{y}' = (y'_1,\dots,y'_d)$, $\mathbf{y}$ is said to weakly dominate $\mathbf{y}'$( noted $\mathbf{y}\succeq \mathbf{y}'$) iff $y_i \geqslant y'_i, \forall i \in [1,\dots,d]$.
+\end{dfn}
+\begin{dfn}
+\textbf{Pareto dominance} Objective vector $\mathbf{y}$ dominated objective vector $\mathbf{y}'$ (noted $\mathbf{y}\succ \mathbf{y}'$) is $\mathbf{y}\succeq \mathbf{y}'$ and $\exists i\in [1,\dots,d], s.t. y_i>y_i'$.
+\end{dfn}
+\begin{dfn}
+\textbf{Incomparability of vectors} Objective vectors $\mathbf{y}$ and $\mathbf{y}'$ are incomparable (noted $\mathbf{y}||\mathbf{y}'$) iff $\mathbf{y}\nsucceq \mathbf{y}'$ and $\mathbf{y}'\nsucceq\mathbf{y}$.
+\end{dfn}
+\begin{dfn}
+\textbf{Pareto optimality} The solution $\mathbf{x}^{\ast}$ and its correspondent objective vector $\mathbf{f(x^{\ast})}$ are Pareto optimal iff $\mathbf{x} \nexists \inputS $ such that $\mathbf{f(x)}\succ\mathbf{f(x^{\ast})}$.
+\end{dfn}
+
+For the sake of simplicity, we will interchangeably speak of Pareto dominance for the decision vector $\mathbf{x}$ and the associated objective $\mathbf{f(x)}$ in the remainder of this manuscript. 
+
+\begin{dfn}
+\textbf{Pareto front} Given a point set $P$, $P^{\ast}$ is the set of points in $P$ which are non-dominated by points in $P$, referred to as Pareto front w.r.t. $P$.
+\[P^{\ast} = \{\mathbf{y}\in P: \nexists \mathbf{y}'\in P \text{ s.t. }\mathbf{y}'\succ\mathbf{y}\}\]
+\end{dfn}
+
+\begin{dfn}
+\textbf{Optimal Pareto front} $P^{\ast\ast}$ is the optimal Pareto front in the considered MOO problem if it includes all points which are non-dominated by other points in $\inputS$.
+\end{dfn}
+\begin{dfn}
+\textbf{Comparison between non-dominated sets} A non-dominated set $P_1$ is said to be better than another non-dominated set $P_2$ (noted $P_1 \succ P_2$) iff every $\mathbf{y}\in P_2$ is weakly dominated by at least one $\mathbf{y}'\in P_1 \text{ and } P_1\neq P_2$.
+\end{dfn}
+\begin{dfn}\textbf{Pareto rank}
+The Pareto ranks w.r.t. a set of objective vectors $P\subseteq \Rd$ are determined in an iterative manner as follows: all non-dominated points in $P$ (noted as $P^{\ast}$ or $\mathscr{F}_1(P)$ ) are given rank 1. The set $\mathscr{F}_1(P)$ is then removed from $P$; from the reduced set, the non-dominated set are given rank 2 (noted as $\mathscr{F}_2(P)$); the process continues until all points of $P$ have received a Pareto rank. The Pareto rank of a point $p\in P$ is denoted $i_{rank}(p,P)$
+\end{dfn}
+
+Noting the largest Pareto rank of points in $P$ by $i_{rank;max}(P)$, we have by construction $\forall i,j \in \{1,\dots, i_{rank,max}(P)\}, i<j \Rightarrow \mathscr{F}_i(P)\succ \mathscr{F}_j(P)$.
+
+To identify the Pareto front, there are several ways to be considered to use. In next two sections, we will address a scalarization functions like linear, Chebyshev\cite{miettinen2012nonlinear} or OWA\cite{yager1988ordered}, which could transform the vector into scalar model; and Pareto partial order \cite{zitzler2003performance} allows to maximize the reward vectors directly in the multi-objective reward space.

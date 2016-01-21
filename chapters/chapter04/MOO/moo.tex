@@ -1,0 +1,19 @@
+\section{Multi-Objective Optimization}
+\label{sec:MOMAB1}
+The simultaneous optimization of two or more conflicting objectives is called Multi-Objective Optimization(MOO). Practical optimization problems, especially the engineering design optimization problems, often have a multi-objective nature. For example, in the engineering design problem, some structural performance criteria are to be maximized, while the weight of the structure and the implementation costs should be minimized simultaneously. 
+
+An MOO problem with $n$ decision variables $x_1,\dots,x_n$ and $d$ objectives $f_1,\dots, f_d$ is formulated as follows:
+\begin{equation}
+\label{equa:moo}
+\begin{split}
+\text{Optimize} y=\mathbf{f(x)} =\left(f_1(x),\dots,f_d(x)\right) \\
+s.t. \mathbf{x} = (x_1,\dots,x_n)\in \inputS
+\end{split}
+\end{equation}
+where the decision vector $\mathbf{x}$ ranges in the decision (parameter) space $\inputS$, $\mathbf{y}$ is the objective vector with $f_i$ mapping $\inputS$ onto $\mathbb{R}$, $\Rd$ is the objective space. The objective function is the mapping $\mathbf{f} : \inputS \rightarrow \Rd$. In the following, without loss of generality, we only consider objectives $\mathbf{f_i}$, $\mathbf{i = 1,2,\dots,d}$ to be maximized.
+
+\input{MOO/pareto.tex}
+
+\input{MOO/dominance.tex}
+
+\input{MOO/aggregation.tex}

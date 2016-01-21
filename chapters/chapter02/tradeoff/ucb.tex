@@ -1,0 +1,52 @@
+\subsection{Upper Confidence Bound}
+\label{subsec:ucb}
+Upper Confidence Bound (UCB) was proposed by Lai \cite{lai1985asymptotically}, to deal with the Exploration and Exploitation dilemma in the Multi-Armed Bandit problem by using Upper Confidence Values. Most strategy for trading off Exploration and Exploitation, they have one weakness: they do not keep track of how much they know about any of options available to them. They pay much more attention only to how much reward they got. This means that they will under-explore options whose initial experiences were not rewarding, even though they don't have enough data to be confident about those options. But UCB can do better that pays attention to not only what it knows, but also how much it knows. 
+
+For example, in stochastic Multi-Armed Bandit problem, gambler has to choose in trials $t\in \{1,2,\dots,T\}$ an arm from a given set of arms $\mathscr{K} = \{1,\dots,K\}$. 
+In each trial $t$ the gambler obtains random reward $r_{k,t}\in \{0,1\}$ for choosing arm $k$. 
+It is assumed that for each arm $k$ the random reward $r_{k,t}$ is independent and identically distributed random variables with mean $\mu_k$ which is unknown. 
+Further, it is assumed that the rewards $r_{k,t}$ and $r_{k',t'}$ for distinct arms $k,k'$ are independent for all $k\neq k' \in \mathscr{K}$ and all $t, t' \in \mathscr{T}$.
+ 
+The gambler's aim is to compete with the arm giving highest mean reward $\mu^{\ast}:= max_{k\in \mathscr{K}} \mu_k$. The arm with the best estimate $\hat{\mu}^{\ast}$ so far serves as a creteria, and other arms are played only if the upper bound of a suitable confidence interval is at least $\hat{\mu}^{\ast}$. That way, within $T$ trials each suboptimal arm can be shown to be played at most $\left(\frac{1}{D_{KL}}+o(1)\right)\log{T}$ times in expectation, where $D_{KL}$ measures the distance between the reward distributions of the optimal and the suboptimal arm by the Kellback-Leibler divergence, and $o(1) \rightarrow 0$ as $T \rightarrow \infty$. This bound was also shown to be asymptotically optimal\cite{lai1985asymptotically}.
+
+Auer \cite{auer2003using} introduced the simple, yet efficient UCB algorithm, that is also based on the ideas of Lai's. After playing each arm once for initialization, UCB chooses at trial $t$ the arm $k$ that maximizes
+\begin{equation}
+\label{equa:UCB}
+\hat{\mu}_k+\sqrt{\frac{2\log{t}}{n_k}}
+\end{equation},
+where $\hat{\mu}_k$ is the average reward obtained from arm $k$, and $n_k$ is the number of times arm $k$ has been played up to trial $t$. The value in Equation~\ref{equa:UCB} can be interpreted as the Upper Bound of a confidence interval, so that the true mean reward of each arm $k$ with high probability is below this upper confidence bound.
+
+In particular, the upper confidence value of the optimal arm will be higher than the true optimal mean reward $\mu^{\ast}$ with high probability. Consequently, as soon as a suboptimal arm $k$ has been played sufficiently often so that the length of the confidence interval $\sqrt{\frac{2\log{t}}{n_k}}$ is small enough to guarantee that
+\[\hat{\mu}_k+\sqrt{\frac{2\log{t}}{n_k}} < \mu^{\ast}
+\],
+arm $k$ will not be played anymore with high probability. As it also holds that with high probability
+\[\hat{\mu}_k<\mu_k+\sqrt{\frac{2\log{t}}{n_k}}\],
+arm $k$ is not played as soon as 
+\[2\sqrt{\frac{2\log{t}}{n_k}}<\mu^{\ast}-\mu_k\],
+that is, as soon as arm $k$ has been played
+\[\left \lceil \frac{8\log{t}}{(r^{\ast}-r_k)^2} \right \rceil\]
+times. This informal argument can be made stringent to show that each suboptimal arm $k$ in expectation will not be played more often than $\frac{\log{T}}{\Delta_k^2}$ times within $T$ trials, 
+where $\Delta_k:=\mu^{\ast}-\mu_k$ is the distance between the optimal mean reward and $\mu_k$.
+
+%!ALGORITHM-----------------------------
+%!--------------------------------------
+\begin{algo}[Improved UCB algorithm]
+%\caption{Improved UCB algorithm}
+\label{algo:UCB1}
+\begin{algorithmic}
+\STATE {\ }
+\STATE Set arms $\mathscr{K}= \{1,\dots,K\}$, all playing times $\mathscr{T} = 1,2, \dots, T$
+\STATE Initialization: Set $\tilde{\Delta}_0:=1$, and $B_0:=\mathscr{K}$.
+\FOR {each round $t = 1,2,\dots, \left \lfloor \frac{1}{2}\log{\frac{T}{e}} \right \rfloor$ }
+	\STATE Select arm: if $|B_m|>1$, choose each arm in $B_m$ until the total number of times it has been chosen is $n_m:= \left \lceil \frac{2\log{T\tilde{\Delta}^2_m}}{\tilde{\Delta}^2_m} \right \rceil$. Otherwise choose the single $B_m$ until step $T$ is reached.
+	\STATE Eliminate arm: Delete all arms $i$ from $B_m$ for which
+    \[ \left\{ \hat{\mu}_i+\sqrt{\frac{\log{T\tilde{\Delta}^2_m}}{2n_m}} \right\} < \text{max}_{j\in B} \left\{ \hat{\mu}_j - \sqrt{\frac{\log{T\tilde{\Delta}^2_m}}{2n_m}}\right\} \] in order to obtain $B_{m+1}$. Here $\hat{\mu}_j$ is the average reward obtained from arm $j$.
+    \STATE	Reset $\tilde{\Delta}_m$: Set $\tilde{\Delta}_{m+1} = \frac{\tilde{\Delta}_m}{2}$
+\ENDFOR
+\end{algorithmic}
+\end{algo}
+%!----------------------------------------
+
+In \cite{auer2010ucb}, Auer proposed an improved UCB algorithm (shown in Algorithm~\ref{algo:UCB1}). In this improved model, gambler can access to the values $\Delta_k$, one could directly modify the confidence intervals of UCB as given \cite{agrawal1995sample} to $\sqrt{\frac{2\log{t\Delta_k^2}}{n_k}}$, and the proof of the claimed regret bound would be straightforward.
+
+However, since the $\Delta_k$ is unknown to the learner, the modified algorithm shown in Algorithm~\ref{algo:UCB1} guesses the values $\Delta_k$ by a value $\tilde{\Delta}$, which is initialized to 1 and halved each time the confidence intervals become shorter than $\tilde{\Delta}$. Note that compared to the original UCB algorithm the confidence intervals are shorter, in particular for arms with high estimated reward. Unlike the original UCB algorithm, our modification eliminates arms that perform bad. As the analysis will show, each suboptimal arm is eliminated as soon as $\tilde{\Delta}<\frac{\Delta_k}{2}$, provided that the confidence intervals hold. Similar arm elimination algorithms were already proposed in \cite{even2006action}. 

@@ -1,0 +1,32 @@
+\section{Gittins index}
+\label{sec:gittins}
+
+Multi-Armed Bandit is concerned with sequential decision. The definition can be found at the head of this chapter. In this section, we focus on his optimal decision process.  Someone treat MAB problem as a Markov Decision Process (MDP). However, there is no approach can scale well it on considering the curse of dimensionality by the number of bandit process. In that situation, Gittins and Jones \cite{gittins1974dynamic} show that the problem can be reduced to solve $K$ $1$-dimensional problems from the $K$-dimensional Markov Decision Process  with the state space $\prod_{k=1}^{K}X(k)$, where $X(k) = (x(k,1),x(k,2),\dots)$ present the state of arm $k$. So that, $K$-armed bandit returns denoted by 
+\[
+\begin{split}
+ \text{arm }1: x(1,1),x(1,2),\dots, x(1,t), \dots\\
+ \text{arm }2: x(2,1),x(2,2),\dots, x(2,t), \dots \\
+\dots \\
+ \text{arm }K: x(K,1),x(K,2),\dots, x(K,t), \dots \\
+\end{split}
+\]
+For each arm $k$, to compute
+\begin{equation}
+\label{equa:gittins}
+\mathscr{G}_k(X(k)) = \underset{\tau >0}{\text{sup}} \frac{\mathbb{E}[\sum_{t=0}^{\tau-1}\beta^t r_k(x(k,t))|x(k,0) = x(k)]}{\mathbb{E}[\sum_{t=0}^{\tau-1}\beta^t|x(k,0)=x(k)]}
+\end{equation}
+where $\tau$ is a stopping time constrained and $\mathscr{G}_k$ is the value of the Gittins index for arm $k$. The stopping time $\tau$ represents the first time at which the index for this arm may be optimal no more. For its index neither greater than the initial value. By the way, the decision rule is then to simple arm $k_t$, which can be computed by the format $k_t = \underset{k\in \mathscr{K}}{\text{argmax }} \mathscr{G}_k(X(k))$. 
+
+\begin{theo}{Gittins Index Theorem}
+\label{theo:gittins}
+The problem posed by a simple family of alternative bandit processes, as setup above, is solved by always continuing the process having the greatest \textbf{Gittins Index}, which is defined as Function~\ref{equa:gittins}.
+\end{theo}
+To this theorem, there are various proofs have been given, the original proof is proposed by Gittins and Jones\cite{gittins1974dynamic}, and a later proof by Gittins \cite{gittins1979bandit} relied on an interchange argument. Further simplified by \cite{varaiya1983extension, tsitsiklis1994short}. More details about the proofs can be referred in their papers.
+
+Gittins Index characterized the optimal strategy as Theorem~\ref{theo:gittins}, an equivalent interpretation of the Gittins Index strategy is the following:
+\begin{itemize}
+\item	Select the arm with the highest Gittins Index $\mathscr{G}_k(X(k))$ and play it until its optimal stopping time and repeat.
+\end{itemize}
+Thus, an alternative way to implement the optimal way is to compute the value of Gittins index $\mathscr{G}_k(X(k))$ and the corresponding stopping time $\tau$ for the current state $x(k,t)$. 
+
+Scott \cite{scott2010modern} points out two further concerns that the Gittinx Index strategy  is only optimal for the process in which arms are independent and can be far from optimal when this is not the case. 

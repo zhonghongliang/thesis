@@ -1,0 +1,25 @@
+%=======
+\section{Bandit feedback in Multi-class Classification}
+\label{sec:BF01}
+Classification is a fundamental task of machine learning, and is by now well understood in its basic variants. Unlike the well-studied supervised learning setting, many recent applications (such as recommender system, ad selection,etc) can not work under the frame of  the supervised learning with side information. In this section, we introduce this kind problem: Online Classification with \textbf{Bandit Feedback}.
+
+Online classification with bandit feedback, is a bandit variant of the online classification protocol, where the goal is to sequentially learn a mapping from the context space $\inputS \subseteq\Rd$ to the label space $\outputS=\left\lbrace 1,\dots,K\right\rbrace$, with $K\geq 2$. In this protocol, forecaster keeps  classifiers parameterized $w=(w_1,w_2,\dots,w_K)$ from the hypothesis space $\mathscr{W} \subseteq \mathbb{R}^{K \times d} $. At each steps $t = 1,2,\dots,T$, the side information $x_t \in \inputS$ is sampled as i.i.d., then forecaster predicts the label $\hy$, by the linear hypothesis $w$:
+\begin{equation}
+\label{equa:prediction}
+\hy = \underset{k\in\{1,\dots,K\}}{\text{argmax}} <w_k,x_t>
+\end{equation}
+
+In the standard online protocol, forecaster observes the true label $y_t$ associated with $x_t$ after each prediction and uses this full information to adjust the classifier $w_t$. However, in the bandit version, forecaster only observes an indicator $\1(\hy = y_t)$, that is , whether the prediction at time $t$ is correct or not. We denote the cumulative loss of supervised learning as following:
+\begin{equation}
+\label{equa:cumuloss}
+L = \sum_{t=1}^T l \left(w_t; (\instance,\hy)\right)
+\end{equation}
+And the one with Bandit Feedback is defined as below:
+\begin{equation}
+\label{equa:cumulossBF}
+L_{BF} = \sum_{t=1}^T l_{BF} \left(w_t; (\xt,\1(\hy=y_t)\right)
+\end{equation}
+
+\input{multiclass/subMC.tex}
+
+\input{multiclass/subMCBF.tex}

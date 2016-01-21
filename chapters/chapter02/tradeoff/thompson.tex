@@ -1,0 +1,41 @@
+\subsection{Thompson Sampling}
+\label{subsec:thompson}
+
+Thompson Sampling \cite{thompson1933likelihood}, a randomized algorithm based on Bayesian ideas, is one of oldest heuristic principle  for Bandit problems. Recently, it has been considered having better empirical performance compared to the state-of-the-art methods after several studies demonstrated \cite{chapelle2011empirical,agrawal2011analysis,agrawal2012thompson}.
+
+The origins of Thompson Sampling has been introduced in Chapter~\ref{chap:introduction}, is from the procedure's inventor  William R. Thompson. Thompson was interested in the general problem of research planning. He was concerned with being able to utilize a small numbers of observations in order to steer actions taken before more data could be collected.
+This was in the context of a perceived objection to argument based on small numbers of observations at the time. Thompson posed his problem in terms of deciding between two treatments in a clinical trial. One of the treatments would  be administered to a patient in the trials population and the effect could be observed. These observations could then be incorporated into the decision-making process to improve the odds of the most effective treatment being administered to further patients.
+
+For Bandit problems, this randomized strategy will choose an arm with some probability which matches the probability that the arm is in fact the optimal arm, by giving all past observations of all arm pulls. More reasonable for this randomized chosen is to define the probability that an arm is the best is a Bayesian estimate. 
+
+Being more precise, let $\theta$  be a parameter vector on behavior of a bandit problem. The probability that an arm $k$ is optimal, 
+\begin{equation}
+P(K=k^{\ast}) = \int_{\theta}\mathds{1}(K=k^{\ast}|\theta)P(\theta)\mathrm{d}\theta.
+\end{equation}
+
+An arm is thus pulled with the probability $P(K=k^{\ast})$. This Sampling way could be viewed as forming a decision based on one-step Monte-Carlo Sample by estimating the probability of an arm being the best.
+
+The integral above may not have a closed form solution. The integral may be approximated by quadrature. However, this is undesirable as the running cost of each decision will depend on the difficulty of the multi-armed bandit problem. The insight used in Thompson Sampling is that instead we can sample from a distribution defined by $P(K=k^{\ast})$ by simply first sampling a candidate $\theta$ from the distribution $P(\theta)$. 
+Given a candidate $\theta$ we can then just pull the arm that is best given this candidate $(\1(K=k^{\ast}|\theta))$. $P(\theta)$ is initially specified as  a prior and then later inferred using Bayes rule as rewards from arm pulls are observed . The general Thompson Sampling algorithm for a $K$-armed bandit is therefore described as following
+%!ALGORITHM-----------------------------
+\begin{algo}[Thompson Sampling]
+\label{algo:thompson1}
+\begin{algorithmic}
+\STATE $\ \ $
+\STATE Initialise $P_{(\mu_1,\dots,\mu_K)}$, the prior belief of the mean payoffs of arms $1,\dots,K$. 
+\STATE Let $H_t$ be the history of action, reward pairs $(r_{\tau}, k_{\tau})$ for $1\leqslant \tau \leqslant t$, $H_1 = \{ \}$
+\FOR {each round t = 1,2,\dots, T}
+	\STATE Sample $\theta_i,\dots,\theta_K \sim P(\mu_1,\dots,\mu_K|H_t)$.
+    \STATE Pull arm $k_t = argmax_{k \in \{1,\dots,K\}} \theta_k$
+    \STATE Receive reward $\mathds{1}_{r(k_t)=1}$
+	\STATE Let $H_{t+1} = H_t \cup (k_t,\mathds{1}_{r(k_t)=1})$.
+\ENDFOR
+\end{algorithmic}
+\end{algo}
+%!----------------------------------------
+
+
+\textbf{Optimism in Thompson Sampling}
+There is a question, what is the tradeoff between exploration and exploitation for Thompson Sampling. May \cite{may2012optimistic} tried to separate the two aspects of this algorithm. To do this, he defined the exploitative value of an arm to be the expected payoff of an arm conditioned on the rewards. The estimated value of an arm could be seen as the value of the sampling drawn from the posterioi distribution for the arm. With these, the exploratory value of an arm could then by found by subtracting the exploitative value from the estimated sample value. They observed that this exploratory value could sometimes be negative and so there would be no value from an exploration point of view to pull the arm. The exploratory value of an arm is only negative when the sample estimate drawn from the posterior is less than the exploitative value of the arm. 
+
+In Thompson Sampling, samples are drawn from the posterior distribution of each arm, that is $\theta_k(t)\sim P_{(\mu_k)}$. Instead, Optimistic Thompson Sampling drawn samples such that $\theta_k(t) = max(\mathbb{E}[\mu_k],s_k(t))$ where $s_k(t)\sim P_{(\mu_k)}$. In other words if a sample from the posterior distributions is less than the mean of the distribution, then we take the sample to be then mean. This ensures that the exploratory value of an action is always positive. In Appendix Algorithm~\ref{algo:thompson3} more formally presents the algorithm specifically for the Bernoulli bandit. May\cite{may2012optimistic} observed empirically that Optimistic Thompson Sampling performed better than standard Thompson Sampling.(See in Appendix~\ref{algo:thompson3})

@@ -1,0 +1,11 @@
+\section{Multi-Objective Multi-Armed Bandit}
+\label{MOMAB2}
+Multi-armed bandits (MAB) is a machine learning paradigm used to study and analyze resource allocation in stochastic and uncertain environments. The multi-armed bandit problem that considers reward vectors and imports techniques from multi-obejctive optimization into the MAB algorithms is referred to as multi-objective multi-armed bandits (MOMAB).
+
+A reward vector can be optimal in one objective and sub-optimal in the other objectives. The Pareto front contains several arms considered to be the best according to their reward vectors. Refer to the Multi-Objective Optimization problem, we could solve the MOMAB by the dominance way or construct a scalarization weight. Here, we proposed the MOMAB problem notations:
+
+Consider an initial set of arms $\mathscr{A}$ with cardinality $K$, where $K\geqslant 2$ and let the vector reward space be defined as a d-dimension vector of $[0,1]^d$. When arm $i$ is played, a random vector of reward is received, one component per objective. The random vectors have a stationary distribution with support in $[0,1]^d$. At time steps $t_1,t_2,\dots$, the corresponding reward vectors $X_i^{t_1},X_i^{t_2},\dots$ are independently and identically distributed according to an unknown law with unknown expectation vector $\mu_i = (\mu_i^1,\dots,\mu_i^d)$. Reward values obtained from different arms are also assumed to be independent. 
+
+In the next part, we will introduce some algorithm $\pi$ that chooses the strategy to find the optimal arm to play. Let $T_i(N)$ be the number of times a suboptimal arm $i$ has been played by $\pi$ during the first $N$ plays. The expected reward vectors are computed by averaging the empirical reward vectors observed over the time. The mean of an arm $i$ is estimated to $\hat{\mu}_i(N) = \sum_{s=1}^{T-i(N)}X_i(s)/T_i(N)$, where $X_i(s)$ is the sampled value $s$ for arm $i$.
+
+\input{MOMAB/algorithm.tex}

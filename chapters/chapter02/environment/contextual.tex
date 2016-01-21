@@ -1,0 +1,11 @@
+\subsection{Contextual Bandit}
+\label{subsec:contextual}
+
+Contextual Bandit \cite{agrawal2012thompson,may2012optimistic}, a natural extension of the Multi-Armed Bandit problem, is obtained by associating side information with each arm. Based on this side information, or context, some applications could be modeled naturally as Multi-Armed Bandit problem with context information, so it also named as Bandit with side information. As it is closely related to work in machine learning on supervised learning and reinforcement learning. In order to facilitate the presentation in Chapter~\ref{chap:BF}, the definitions of Contextual Bandit, will be referred to some notations in supervised learning.
+
+For contextual bandit, there is a distribution $\mathbb{P}$ over $(x, r_1, r_2,\dots,r_K)$. On each round $t\in \mathscr{T}=\{1, 2, \dots\}$, the gambler receives a sample $(x_t, r_{t,1},r_{t,2},\dots, r_{t,K})$ drawn from $\mathbb{P}$ and makes decision $\hy \in \mathscr{Y}$ by observing the set of arms $\mathscr{Y} = \{1,\dots,K\}$ with side information a feature vector $\mathbf{x}_{t,y_t} \in \mathscr{X}$. Where $y_t$ is the optimal arm for $x_t$, but gambler do not know this. With the chosen arm $\hy$, gambler receives a  reward $r_{(x_t,\hy)}$. We should emphasize that the reward is only observed for the arm chosen . 
+
+After $\mathscr{T}$ sequence, all rewards for gambler is defined as $\sum_{t=1}^{T}r_{(x_t,\hy)}$. Similarly referring to the stationary setting, we define the regret by the notations above:
+\[R(T) = \mathbb{E}[\sum_{t=1}^{T}r_{(x_t,y_t)}] - \mathbb{E}[\sum_{t=1}^T r_{(x_t,\hy)}].\]
+
+Contextual bandits naturally arise in many applications. For example, online recommendation systems, advertisement push, personalized search etc.

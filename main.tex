@@ -1,0 +1,151 @@
+%\title{University of Bristol Thesis Template}
+\RequirePackage[l2tabu]{nag}		% Warns for incorrect (obsolete) 
+\documentclass[a4paper,11pt,leqno,openbib]{memoir} %add 'draft' to turn draft option on (see below)
+\usepackage{datetime}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{dsfont}
+\usepackage{ifpdf}
+\usepackage{booktabs}
+%\usepackage{subfigure}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\ifpdf
+\pdfinfo{
+   /Author (Author's name)
+   /Title (PhD Thesis)
+   /Keywords (One; Two;Three)
+   /CreationDate (D:\pdfdate)
+}
+\fi
+% When draft option is on. 
+\ifdraftdoc 
+	\usepackage{draftwatermark}				%Sets watermarks up.
+	\SetWatermarkScale{0.3}
+	\SetWatermarkText{\bf Draft: \today}
+\fi
+%
+% Declare figure/table as a subfloat.
+\usepackage{import}
+
+\import{chapters/}{AllCommands.tex}
+
+\begin{document}
+
+\frontmatter
+\pagenumbering{roman}
+%
+\input{frontmatter/title}
+\clearemptydoublepage
+%
+\input{frontmatter/abstract}
+\clearemptydoublepage
+%
+\input{frontmatter/dedication}
+\clearemptydoublepage
+%
+\input{frontmatter/declaration}
+\clearemptydoublepage
+%
+\input{AllNewCommands}
+\renewcommand{\contentsname}{Table of Contents}
+\maxtocdepth{subsection}
+\tableofcontents*
+\addtocontents{toc}{\par\nobreak \mbox{}\hfill{\bf Page}\par\nobreak}
+\clearemptydoublepage
+%
+\listoftables
+\addtocontents{lot}{\par\nobreak\textbf{{\scshape Table} \hfill Page}\par\nobreak}
+\clearemptydoublepage
+%
+\listoffigures
+\addtocontents{lof}{\par\nobreak\textbf{{\scshape Figure} \hfill Page}\par\nobreak}
+\clearemptydoublepage
+%
+%\import{frontmatter/}{notations.tex}
+
+ %\cleardoublepage
+%
+%
+% The bulk of the document is delegated to these chapter files in
+% subdirectories.
+\mainmatter
+%
+\part{General Introduction}
+%
+\import{chapters/chapter00/}{chap00.tex}
+%
+%
+% And the appendix goes here
+%
+\part{State of the art}
+%
+\import{chapters/chapter01/}{chap01.tex}
+\clearemptydoublepage
+%
+%
+%
+%
+%And the appendix goes here
+%
+\import{chapters/chapter02/}{chap02.tex}
+\clearemptydoublepage
+%
+%
+% And the appendix goes here
+\import{chapters/chapter03/}{chap03.tex}
+\clearemptydoublepage
+%
+%
+% And the appendix goes here
+\import{chapters/chapter04/}{chap04.tex}
+\clearemptydoublepage
+%
+%
+% And the appendix goes here
+%
+\part{Contributions}
+%
+\import{chapters/chapter05/}{chap05.tex}
+\clearemptydoublepage
+%
+%   
+%
+%
+% And the appendix goes here
+\import{chapters/chapter06/}{chap06.tex}
+\clearemptydoublepage
+%
+%   
+%
+%
+\part{Conclusion and Perspectives}
+%
+% And the appendix goes here
+\import{chapters/chapter07/}{chap07.tex}
+\clearemptydoublepage
+%
+%   
+%
+%
+% And the appendix goes here
+\begin{appendices} % Using appendices environment for more functunality
+\include{chapters/appendices/app0A}
+\include{chapters/appendices/app0B}
+%\include{chapters/appendices/app0C}
+\end{appendices}
+
+\clearemptydoublepage
+% Apparently the guidelines don't say anything about citations or
+% bibliography styles so I guess we can use anything.
+\backmatter
+\bibliographystyle{siam}
+\refstepcounter{chapter}
+
+\bibliography{main}
+\clearemptydoublepage
+%
+% Add index
+%\printindex
+\end{document}

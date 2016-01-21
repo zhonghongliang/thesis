@@ -1,0 +1,311 @@
+\subsection{Multilabel Classification}
+\label{subsec:multilabel}
+
+This section, we introduce a form of supervised learning: Multi-label Learning. In supervised learning, multiclass classification is a common learning problem where the goal is to learn from a set of instances, each associated with a unique class label from a set of disjoint class labels $\labels$. Depending on the total number of disjoint classes in $\labels$, the problem can be identified as binary classification ($|\labels| = 2$) or multiclass classification (when $|\labels| >2$) . Unlike these problems, multi-label classification is to learn from a set of instances where each instance belong to one or more classes in $\labels$. 
+
+Here, let's define some notations of multi-label classification. Let $\inputS$ be an instance space, and $\labels = \{ \lambda_1, \lambda_2, \dots, \lambda_K\}$ be a finite set of class labels. An instance $\xt \in \inputS$, represented in terms of features vector $\xt = (\mathbf{x}_1,\mathbf{x}_2,\dots,\mathbf{x}_T)$, is associated with a subset of labels $\labels\in 2^{\labels}$. Notice that we call this set $\labels$ be the set of relevant labels of $\xt$. Denote this relevant labels set $\labels$ with a binary vector $Y = (y_1, y_2, \dots, y_K)$, where $y_i = 1 \Leftrightarrow \lambda_i\in \labels$. $\outputS = \{0,1\}^K$ is the set of all such possible labelings. 
+
+Given a training set, $S = (x_i,Y_i)$, $1\leqslant i \leqslant T$, consisting T training instances, $\left( x_i\in \inputS, Y_i \in \outputS\right)$ i.i.d. drawn from an unknown distribution $D$, the goal of the multi-label learning is to produce a multi-label classifier $h: \inputS \rightarrow \outputS $ that optimizes some specific evaluation function (i.e. loss function). 
+
+Refer to \cite{sorower2010literature}, it presents a number of very simple transformation methods which actually transform multi-label data in such a way so that existing classification algorithm (i.e. binary classifiers) can be applied. It would be easier to describe such algorithms using an example multi-label data in Table~\ref{table:multilabel}. Notice that the instances features are ignared here, because they are not really important for describing these algorithms. There are four instances belong to at least one of the 4 classes, $\lambda_1, \lambda_2, \lambda_3, \lambda_4$.
+\begin{table}[!htb]
+\centering
+\caption{Example of multi-label dataset}
+\label{table:multilabel}
+\begin{tabular}{c|l}
+\toprule
+Instance & Label Set \\
+\hline
+$1$ & $\{\lambda_2,\lambda_3\}$ \\
+$2$ & $\{\lambda_1\}$ \\
+$3$ & $\{ \lambda_1,\lambda_2,\lambda_3\}$ \\
+$4$ & $\{\lambda_2,\lambda_4\}$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The copy transformation method replaces each example $(\xt, Y_t)$ with $|Y_t|$ examples $(\xt,\lambda_t)$, for each $\lambda_i\in Y_t$. An extension to this is to use an weight of $\frac{1}{|Y_t|}$ to each of these newly created examples. This is called dubbed copy-weight method.
+
+For each instance, the select family of transformation methods replaces $Y_t$ by one of its members. Depending on how this one member is selected, there can be several versions, namely, select-min (least frequent), select-max (most frequent), and select-random (randomly selected). 
+
+Finally, ignore transformation simply ignores the multilabel instances and runs the training with single label instances only. 
+
+\iffalse
+Some Tables~\ref{table:MLa},~\ref{table:MLb},~\ref{table:MLc},~\ref{table:MLd},~\ref{table:MLe},~\ref{table:MLf} show that datasets produced by these approaches. Notice that none of these methods is likely to retain the actual data distribution and therefore is likely to have lower prediction performance.
+\begin{table}[!htb]
+\centering
+\caption{Transformed multi-label data: copy}
+\label{table:MLa}
+\begin{tabular}{c|r}
+\toprule
+Instance & Label \\
+\hline
+$1$a & $\lambda_2$ \\
+1b & $\lambda_3$ \\
+$2$ & $\lambda_1$ \\
+$3a$ & $ \lambda_1$ \\
+3b & $\lambda_2$ \\
+3c & $\lambda_3$\\
+$4a$ & $\lambda_2$\\
+4b & $\lambda_4$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!htb]
+\centering
+\caption{Transformed multi-label data: dubbed copy-weight}
+\label{table:MLb}
+\begin{tabular}{c|r|l}
+\toprule
+Instance & Label & Weight\\
+\hline
+$1$a & $\lambda_2$ & 0.5 \\
+1b & $\lambda_3$ & 0.5 \\
+$2$ & $\lambda_1$ & 1.0 \\
+$3a$ & $ \lambda_1$& 0.33 \\
+3b & $\lambda_2$ & 0.33 \\
+3c & $\lambda_3$& 0.33 \\
+$4a$ & $\lambda_2$& 0.5 \\
+4b & $\lambda_4$& 0.5 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!htb]
+\centering
+\caption{Transformed multi-label data: select-max}
+\label{table:MLc}
+\begin{tabular}{c|r}
+\toprule
+Instance & Label \\
+\hline
+$1$ & $\lambda_2$  \\
+$2$ & $\lambda_1$ \\
+3 & $\lambda_2$ \\
+$4$ & $\lambda_2$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!htb]
+\centering
+\caption{Transformed multi-label data: select-min}
+\label{table:MLd}
+\begin{tabular}{c|r}
+\toprule
+Instance & Label \\
+\hline
+$1$ & $\lambda_3$  \\
+$2$ & $\lambda_1$ \\
+3 & $\lambda_1$ \\
+$4$ & $\lambda_4$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!htb]
+\centering
+\caption{Transformed multi-label data: select-random}
+\label{table:MLe}
+\begin{tabular}{c|r}
+\toprule
+Instance & Label \\
+\hline
+$1$ & $\lambda_3$  \\
+$2$ & $\lambda_1$ \\
+3 & $\lambda_2$ \\
+$4$ & $\lambda_4$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!htb]
+\centering
+\caption{Transformed multi-label data: ignore}
+\label{table:MLf}
+\begin{tabular}{c|r}
+\toprule
+Instance & Label \\
+\hline
+$2$ & $\lambda_1$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+\fi
+
+\textbf{Label Powerset (LP)} Label Powerset(LP) is a straight forward method that considers each unique set of labels in a multilabel training data as one class in the new transformed data. Therefore, the new transformed problem is a single label classification task. For a new instance, LP outputs the most probable class which actually is a set of classes in the original data. It is also possible to produce a ranking of labels using LP, given the classifier can output a probability distribution over all newly formed classes. Table~\ref{table:MLLP} shows the dataset transformed using LP method. Notice that the computational complexity of LP is upper bounded by $min(n,2^K)$, where $n$ is the total number of data instances and $K$ is the total number of classes in the training data. In practice complexity would be much less than $2^K$, still for large values of $T$ and $K$ this can be an issue. The second problem with this approach is that, a large number of classes would be associated with very few examples and that would also pose extreme class imbalance problem for learning.
+\begin{table}[!htb]
+\caption{Transformed data using Label Power-set method}
+\label{table:MLLP}
+\centering
+\begin{tabular}{c|l}
+\toprule
+Instance & Label \\
+\hline
+1 & $\lambda_{2,3}$\\
+2 & $\lambda_1$ \\
+3 & $\lambda_{1,2,3}$ \\
+4 & $\lambda _{2,4}$\\
+\bottomrule
+\end{tabular}
+\end{table}
+\textbf{Binary Relevance (BR)} Binary Relevance (BR) is one of the most popular approaches as a transformation method that actually creates $K$ datasets $(K = |\labels|$, total number of classes), each for one class label and trains a classifier on each of these datasets. Each of these datasets contains the same number of instances as the original data, but each dataset $D_{\lambda_j}$, $1\leqslant j \leqslant K$ positively labels instances that belong to class $\lambda_j$ and negative otherwise. Table~\ref{table:MLBR} show the example dataset transformed for BR.
+
+\begin{table}[!htb]
+\caption{Transformed data produced by Binary Relevance (BR) method}
+\label{table:MLBR}
+\centering
+\begin{subtable}[]{.22\textwidth}
+\centering
+\begin{tabular}{c|r}
+\toprule
+Instance & Label \\
+\hline
+1 & $\lnot \lambda_1$\\
+2 & $\lambda_1$ \\
+3 & $\lambda_1$ \\
+4 & $\lnot\lambda_1$ \\
+\bottomrule
+\end{tabular}
+\subcaption{}
+\end{subtable}
+\hfill
+\begin{subtable}[]{.22\textwidth}
+\centering
+\begin{tabular}{c|r}
+\toprule
+Instance & Label \\
+\hline
+1 & $ \lambda_2$\\
+2 & $\lnot\lambda_2$ \\
+3 & $\lambda_2$ \\
+4 & $\lambda_2$ \\
+\bottomrule
+\end{tabular}
+\subcaption{}
+\end{subtable}
+\hfill
+\begin{subtable}[]{.22\textwidth}
+\centering
+\begin{tabular}{c|r}
+\toprule
+Instance & Label \\
+\hline
+1 & $\lambda_3$ \\
+2 & $\lnot\lambda_3$\\
+3 & $\lambda_3$ \\
+4 & $\lnot\lambda_3$\\
+\bottomrule
+\end{tabular}
+\subcaption{}
+\end{subtable}
+\hfill
+\begin{subtable}[]{.22\textwidth}
+\centering
+\begin{tabular}{c|r}
+\toprule
+Instance & Label \\
+\hline
+1 & $\lnot\lambda_4$\\
+2 & $\lnot\lambda_4$ \\
+3 & $\lnot\lambda_4$ \\
+4 & $\lambda_4$ \\
+\bottomrule
+\end{tabular}
+\subcaption{}
+\end{subtable}
+\end{table}
+Once these datasets are ready, it is easy to train one binary classifier for each. For any new instance, BR outputs the union of the labels $\lambda_j$ that are positively predicted by the $K$ classifiers. While BR has been used in many practical applications, it has been widely criticized for its implicit assumption of label independence which might not hold in the data.
+
+\textbf{Ranking by Pairwise Comparison} (RPC) \cite{brinker2007label} transforms the multilabel dataset into $\binom{k}{2}$ binary label datasets, one for each pair of labels, $(\lambda_i,\lambda_j)$, $1\leqslant i < j \leqslant K$. Each dataset retains the instances from the original dataset that belong to at least one of the corresponding labels but not both (show in Table~\ref{table:MLRPC}).
+\begin{table}[!htb]
+\caption{Transformed data by RPC method}
+\label{table:MLRPC}
+\centering
+\begin{subtable}[]{.16\textwidth}
+\centering
+\begin{tabular}{c|l}
+\toprule
+$\xt$ & L \\
+\hline
+1 & $\lambda_{\lnot1,2}$\\
+2 & $\lambda_{1,\not2}$ \\
+4 & $\lambda_{\lnot1,2}$\\
+\bottomrule
+\end{tabular}
+\subcaption{}
+\end{subtable}
+\hfill
+\begin{subtable}[]{.16\textwidth}
+\centering
+\begin{tabular}{c|l}
+\toprule
+$\xt$ & L \\
+\hline
+1 & $\lambda_{\lnot1,3}$\\
+2 & $\lambda_{1,\not3}$ \\
+4 & $\lambda_{\lnot1,\lnot3}$\\
+\bottomrule
+\end{tabular}
+\subcaption{}
+\end{subtable}
+\hfill
+\begin{subtable}[]{.16\textwidth}
+\centering
+\begin{tabular}{c|l}
+\toprule
+$\xt$ & L \\
+\hline
+1 & $\lambda_{1,\lnot4}$\\
+2 & $\lambda_{1,\not4}$ \\
+4 & $\lambda_{\lnot1,4}$\\
+\bottomrule
+\end{tabular}
+\subcaption{}
+\end{subtable}
+\hfill
+\begin{subtable}[]{.16\textwidth}
+\centering
+\begin{tabular}{c|l}
+\toprule
+$\xt$ & L \\
+\hline
+4 & $\lambda_{2,\lnot3}$\\
+\bottomrule
+\end{tabular}
+\subcaption{}
+\end{subtable}
+\hfill
+\begin{subtable}[]{.16\textwidth}
+\centering
+\begin{tabular}{c|l}
+\toprule
+$\xt$ & L \\
+\hline
+1 & $\lambda_{2,\lnot4}$\\
+3 & $\lambda_{2,\not4}$ \\
+\bottomrule
+\end{tabular}
+\subcaption{}
+\end{subtable}
+\hfill
+\begin{subtable}[]{.16\textwidth}
+\centering
+\begin{tabular}{c|l}
+\toprule
+$\xt$ & L \\
+\hline
+3 & $\lambda_{3,\lnot4}$\\
+4 & $\lambda_{\lnot3,4}$\\
+\bottomrule
+\end{tabular}
+\subcaption{}
+\end{subtable}
+\end{table}
+
+A binary classifier is then trained on each of these datasets. Also, given a new instances, it is easy to obtain a ranking of labels by first invoking all these binary classifiers and then counting their votes for each label. Mencia\cite{loza2008pairwise} proposes Multi-label Pairwise Perceptron (MLPP) algorithm that uses RPC with perceptrons as the binary classification method.
+
+\textbf{Calibrated Label Ranking (CLR)} Even though ranking provides a relative order of the labels, Furnkranz\cite{loza2008pairwise} argues that such ranking does not have a natural ``zero-point'' and therefore, does not provide any information about the absolute preference that can distinguish among all alternatives. It could be misleading to distinguish between the sets of relevant and non-relevant classes based on the label ranking. CLR was proposed in that situation by Furnkranz that is an extension of RPC, introducing an additional label to the original label set, which can be interpreted as a ``neutral breaking point'' and can be thought as a split point between relevant and irrelevant labels. Thus a calibrated ranking,
+\[\lambda_{i1}\succ\lambda_{i2}\succ\dots\succ\lambda_{ij}\succ\lambda_0\succ \lambda_{i(j+1)}\succ\dots\succ\lambda_{iK}\]
+clearly is a ranking of the labels (ignore the calibration label $\lambda_0$) and at the same time creates a bipartition of relevant $(\lambda_{i1}\dots\lambda_{ij})$ and irrelevant $(\lambda_{i(j+1)}\dots \lambda_{iK})$ labels. Each example that is annotated with a particular label, clearly is a positive example for that label and is treated as a negative example for the calibration label. Each example that is not annotated with a label is clearly a negative example for that label and is treated as a positive example for the calibration label. Thus a Binary Relevance (BR) classifier can then be employed to discriminate between the calibrated label and each of the other labels. Intuitively, while applied to the dataset in Table~\ref{table:multilabel}, CLR could work on both the data in Table~\ref{table:MLBR} and ~\ref{table:MLRPC}, the latter one is for the calibration label.
